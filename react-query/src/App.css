@@ -1,0 +1,46 @@
+/* #root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+} */
+
+/* root div {
+  height: 100%;
+  width: 100%;
+  background-color: wheat;
+} */
+body {
+  height: 100%;
+  width: 100%;
+  /* background-color: cadetblue; */
+}
+
+div nav {
+  /* background-color: lightsalmon; */
+  margin-top: 0%;
+  padding-top: 0%;
+}
+
+nav ul {
+  display: flex;
+  justify-content: space-evenly;
+
+  /* background-color: blanchedalmond; */
+  margin-block-start: 0;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+nav ul li {
+  list-style-type: none;
+  margin-right: 16px;
+}
+
+h1,
+h2 {
+  margin-top: 0.5rem;
+  text-align: center;
+}

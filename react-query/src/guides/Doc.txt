@@ -1,0 +1,56 @@
+
+isLoading	->   First-time load, no cached data. 
+                 eg.Show full-page loader
+isFetching	->   Any ongoing fetch (including refetch). 
+                 eg.Show background refresh indicator
+
+👉 Think of it like this:
+isLoading = "We don’t have data yet, hang tight!"
+isFetching = "We’re updating the data, but you can still use what’s already there."
+
+Timeline of a Query Lifecycle
+1. Initial Mount (no cached data): React Query starts fetching data for the first time.
+Flags:
+isLoading = true ✅ (because there’s no data yet)
+isFetching = true ✅ (because a fetch is happening)
+
+2. Data Arrives (first response): The query finishes and caches the data.
+Flags:
+isLoading = false ❌ (we now have data)
+isFetching = false ❌ (fetch is complete)
+
+3. Background Refetch (e.g., window focus, interval, or manual refetch): React Query silently refetches to keep data fresh.
+Flags:
+isLoading = false ❌ (we already have cached data, so no “blank screen”)
+isFetching = true ✅ (fetch is happening in the background)
+
+4. Refetch Completes: New data replaces cached data.
+Flags:
+isLoading = false ❌
+isFetching = false ❌
+
+isLoading is only about the very first load.
+isFetching is about any ongoing fetch, including background refetches.
+
+===================================
+
+Default value:
+cacheTime: 5 min
+staleTime: 0s
+refetchOnMount: true
+refetchOnWindowFocus: true
+refetchInterval: false
+
+polling - process of fetching data at regular intervals
+
+
+Feature	       staleTime	                   cacheTime
+Purpose	       Controls data freshness	       Controls memory retention
+Triggers       Refetching behavior	           Garbage collection
+Default	       0 ms	                           300000 ms (5 minutes)
+Applies to	   Active queries	               Inactive queries
+Typical use	   Reduce refetching	           Improve performance on remount
+
+Always set cacheTime longer than staleTime. 
+This ensures that fresh data remains in memory and avoids unnecessary refetches when components remount
+===================================

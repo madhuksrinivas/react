@@ -1,0 +1,277 @@
+# React Query Data Fetching Flowchart
+
+## Initial Query Execution Flow
+
+```
+┌─────────────────────────────────────┐
+│   Component Mounts with useQuery    │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+        ┌─────────────┐
+        │ enabled: ?  │
+        └──────┬──────┘
+               │
+       ┌───────┴────────┐
+       │                │
+    true/undefined    false
+       │                │
+       ▼                ▼
+┌─────────────┐   ┌──────────────────┐
+│ Check Cache │   │  Query Disabled  │
+└──────┬──────┘   │  (No execution)  │
+       │          └──────────────────┘
+       ▼
+ ┌──────────┐
+ │ Cache    │
+ │ exists?  │
+ └────┬─────┘
+      │
+  ┌───┴────┐
+  │        │
+ YES       NO
+  │        │
+  ▼        ▼
+┌────────┐  ┌─────────────────┐
+│ Return │  │ isLoading: true │
+│ Cached │  │ Fetch Data      │
+│ Data   │  └────────┬────────┘
+└───┬────┘           │
+    │                ▼
+    │         ┌─────────────┐
+    │         │  Success?   │
+    │         └──────┬──────┘
+    │                │
+    │        ┌───────┴────────┐
+    │        │                │
+    │       YES               NO
+    │        │                │
+    │        ▼                ▼
+    │  ┌──────────┐    ┌────────────┐
+    │  │ Cache    │    │ isError:   │
+    │  │ Data     │    │ true       │
+    │  └──────────┘    └────────────┘
+    │        │
+    └────────┴─────────┐
+                       ▼
+              ┌─────────────────┐
+              │ Check Staleness │
+              └────────┬────────┘
+                       │
+                  (continues to
+                   refetch logic)
+```
+
+## Refetch Logic Flow
+
+```
+┌──────────────────────────────┐
+│ Trigger Event Occurs:        │
+│ - Component Re-mount         │
+│ - Window Focus               │
+│ - Network Reconnect          │
+│ - Manual Refetch             │
+│ - Interval (if polling)      │
+└──────────────┬───────────────┘
+               │
+               ▼
+        ┌─────────────┐
+        │ Is Data     │
+        │ FRESH?      │
+        │ (staleTime) │
+        └──────┬──────┘
+               │
+       ┌───────┴────────┐
+       │                │
+     FRESH            STALE
+       │                │
+       ▼                ▼
+┌──────────────┐  ┌─────────────────┐
+│ Check Config │  │ Background      │
+│ Override     │  │ Refetch         │
+└──────┬───────┘  │ (isRefetching)  │
+       │          └────────┬────────┘
+       ▼                   │
+┌──────────────┐           ▼
+│ "always"?    │    ┌─────────────┐
+└──────┬───────┘    │  Success?   │
+       │            └──────┬──────┘
+   ┌───┴────┐              │
+   │        │      ┌───────┴────────┐
+  YES       NO     │                │
+   │        │     YES               NO
+   ▼        ▼      │                │
+┌────────┐ ┌────┐  ▼                ▼
+│Refetch │ │Skip│ ┌─────────┐ ┌──────────┐
+└────────┘ └────┘ │ Update  │ │ Keep Old │
+                  │ Cache   │ │ Data +   │
+                  └─────────┘ │ Set Error│
+                              └──────────┘
+```
+
+## Configuration Decision Tree
+
+```
+┌─────────────────────────────────────┐
+│     staleTime Configuration         │
+└──────────────┬──────────────────────┘
+               │
+       ┌───────┴────────┐
+       │                │
+   staleTime: 0      staleTime: 30000
+   (default)         (30 seconds)
+       │                │
+       ▼                ▼
+┌─────────────┐   ┌──────────────────┐
+│ Data is     │   │ Data is FRESH    │
+│ STALE       │   │ for 30 seconds   │
+│ immediately │   │                  │
+└──────┬──────┘   └────────┬─────────┘
+       │                   │
+       ▼                   ▼
+┌─────────────┐   ┌──────────────────┐
+│ Refetch on  │   │ NO refetch on    │
+│ - Mount     │   │ - Mount          │
+│ - Focus     │   │ - Focus          │
+│ - Reconnect │   │ - Reconnect      │
+└─────────────┘   │ (unless "always")│
+                  └──────────────────┘
+```
+
+## Cache Lifecycle
+
+```
+┌──────────────┐
+│ Data Fetched │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Stored in Cache      │
+│ Status: FRESH        │
+│ (if staleTime > 0)   │
+└──────┬───────────────┘
+       │
+       │ (after staleTime)
+       ▼
+┌──────────────────────┐
+│ Status: STALE        │
+│ Still in Cache       │
+│ Can trigger refetch  │
+└──────┬───────────────┘
+       │
+       │ (component unmounts)
+       ▼
+┌──────────────────────┐
+│ Cache Timer Starts   │
+│ (cacheTime)          │
+└──────┬───────────────┘
+       │
+       │ (after cacheTime)
+       ▼
+┌──────────────────────┐
+│ Garbage Collection   │
+│ Data Removed         │
+└──────────────────────┘
+```
+
+## Polling (refetchInterval) Flow
+
+```
+┌──────────────────────┐
+│ refetchInterval:     │
+│ 2000 (2 seconds)     │
+└──────┬───────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Component Mounted    │
+│ Timer Started        │
+└──────┬───────────────┘
+       │
+       │ (every 2 seconds)
+       ▼
+┌──────────────────────┐
+│ Automatic Refetch    │
+└──────┬───────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Window Focus Lost?   │
+└──────┬───────────────┘
+       │
+   ┌───┴────┐
+   │        │
+  YES       NO
+   │        │
+   ▼        ▼
+┌────────┐ ┌─────────────┐
+│refetch │ │  Continue   │
+│Interval│ │  Polling    │
+│InBack  │ └─────────────┘
+│ground? │
+└───┬────┘
+    │
+┌───┴────┐
+│        │
+YES      NO
+│        │
+▼        ▼
+┌────┐ ┌──────┐
+│Keep│ │Pause │
+│Poll│ │Poll  │
+└────┘ └──────┘
+```
+
+## Query States
+
+```
+┌─────────────────────────────────────┐
+│          Query States               │
+└─────────────────────────────────────┘
+
+Initial Load:
+isLoading: true, isFetching: true
+           ↓
+Success:
+isLoading: false, isFetching: false, data: {...}
+           ↓
+Background Refetch:
+isLoading: false, isRefetching: true, data: {...}
+           ↓
+           ├─→ Success: data updated
+           └─→ Error: old data kept, isError: true
+
+Disabled Query:
+isLoading: false, isFetching: false, data: undefined
+```
+
+## Complete Example Flow
+
+```
+User opens app
+     ↓
+Component mounts
+     ↓
+enabled: true (default) → Query executes
+     ↓
+Cache empty → isLoading: true
+     ↓
+Fetch from API (500ms delay)
+     ↓
+Success → Cache data
+     ↓
+staleTime: 0 → Immediately STALE
+     ↓
+User switches tabs (loses focus)
+     ↓
+User returns (window focus)
+     ↓
+Data is STALE + refetchOnWindowFocus: true → Refetch!
+     ↓
+isRefetching: true (old data still shown)
+     ↓
+New data arrives → Cache updated
+     ↓
+User sees fresh data
+```
