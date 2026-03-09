@@ -1,0 +1,59 @@
+Higher Order Component (HOC) is a pattern for reusing component logic by wrapping components.
+
+Key Points About HOCs:
+1. Function that takes a component → returns a new enhanced component
+2. Pure functions → don't modify the original component
+3. Add props or behavior → inject additional functionality
+4. Composition over inheritance → wrap components to enhance them
+
+Why HOCs Matter:
+Before hooks, HOCs were the main way to share logic.
+Still useful for cross-cutting concerns.
+Understanding HOCs helps with many React libraries.
+
+Example:
+function withAuth(Component) {
+  return function AuthenticatedComponent(props) {
+    const isAuthenticated = checkAuth();
+    
+    if (!isAuthenticated) {
+      return <Redirect to="/login" />;
+    }
+    
+    return <Component {...props} />;
+  };
+}
+
+// Usage
+const ProtectedPage = withAuth(Dashboard);
+
+How HOCs Work:
+1. Take a component as argument
+2. Create a wrapper component
+3. Render the original component with extra props
+4. Return the wrapper component
+
+Common HOC Use Cases:
+- Authentication/authorization
+- Loading states
+- Error boundaries
+- Data fetching
+- Tracking/analytics
+
+HOC Naming Convention:
+Start with "with" prefix: withAuth, withLoading, withRouter, withTheme
+
+Modern Alternative:
+Custom hooks are now preferred over HOCs in most cases:
+- Easier to understand
+- Better composition
+- No wrapper hell
+
+When to use HOCs vs Hooks:
+✅ HOCs: wrapping third-party components, cross-cutting concerns
+✅ Hooks: extracting stateful logic, most new code
+
+Example Libraries using HOCs:
+- React Router: withRouter
+- Redux: connect
+- Material-UI: withStyles

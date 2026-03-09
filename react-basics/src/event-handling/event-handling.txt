@@ -1,0 +1,261 @@
+Event Handling in React is how you respond to user interactions like clicks, typing, and mouse movements.
+
+Key Points About Event Handling:
+1. camelCase naming → onClick, onChange, onSubmit (not onclick)
+2. Pass function reference → {handleClick} not {handleClick()}
+3. Synthetic events → cross-browser compatible event system
+4. Event object → access event details via parameter
+
+Why Event Handling Matters:
+Makes applications interactive and responsive.
+Essential for forms, buttons, user input.
+Core part of building dynamic UIs.
+
+React Event Syntax:
+
+HTML:
+<button onclick="handleClick()">Click</button>
+
+React:
+<button onClick={handleClick}>Click</button>
+
+Common Event Types:
+
+Mouse Events:
+- onClick: element clicked
+- onDoubleClick: element double-clicked
+- onMouseEnter: mouse enters element
+- onMouseLeave: mouse leaves element
+- onMouseMove: mouse moves over element
+
+Keyboard Events:
+- onKeyDown: key pressed down
+- onKeyUp: key released
+- onKeyPress: key pressed (deprecated, use onKeyDown)
+
+Form Events:
+- onChange: input value changes
+- onSubmit: form submitted
+- onFocus: element gains focus
+- onBlur: element loses focus
+
+Examples:
+
+1. Click Event:
+function App() {
+  const handleClick = () => {
+    alert("Button clicked!");
+  };
+  
+  return <button onClick={handleClick}>Click Me</button>;
+}
+
+2. Input Change Event:
+function App() {
+  const [value, setValue] = useState("");
+  
+  const handleChange = (e) => {
+    setValue(e.target.value);
+  };
+  
+  return <input value={value} onChange={handleChange} />;
+}
+
+3. Form Submit Event:
+function App() {
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent page reload
+    console.log("Form submitted");
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+Event Object:
+React provides a synthetic event object that wraps native browser events.
+
+function handleClick(e) {
+  console.log(e.target);      // Element that triggered event
+  console.log(e.type);        // Event type ("click")
+  console.log(e.clientX);     // Mouse X position
+  e.preventDefault();         // Prevent default action
+  e.stopPropagation();        // Stop event bubbling
+}
+
+Event Handler Patterns:
+
+1. Inline Arrow Function:
+<button onClick={() => alert("Clicked!")}>Click</button>
+
+Pros: Can pass arguments easily
+Cons: Creates new function on every render
+
+2. Function Reference:
+<button onClick={handleClick}>Click</button>
+
+Pros: Better performance, function reused
+Cons: Can't pass arguments directly
+
+3. Passing Arguments:
+<button onClick={() => handleClick(id)}>Delete</button>
+
+Or use bind:
+<button onClick={handleClick.bind(this, id)}>Delete</button>
+
+4. Event Parameter:
+<button onClick={(e) => handleClick(e, id)}>Click</button>
+
+Preventing Default Behavior:
+Links and forms have default actions - use e.preventDefault():
+
+function handleSubmit(e) {
+  e.preventDefault(); // Don't reload page
+  // Handle form submission
+}
+
+<form onSubmit={handleSubmit}>
+  ...
+</form>
+
+Stopping Event Propagation:
+Prevent event from bubbling up to parent elements:
+
+function handleClick(e) {
+  e.stopPropagation();
+  // Only this handler runs, not parent handlers
+}
+
+Common Patterns:
+
+Controlled Input:
+function Input() {
+  const [value, setValue] = useState("");
+  
+  return (
+    <input 
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+    />
+  );
+}
+
+Button with State:
+function Counter() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Clicked {count} times
+    </button>
+  );
+}
+
+Conditional Event:
+function App() {
+  const [enabled, setEnabled] = useState(true);
+  
+  const handleClick = () => {
+    if (!enabled) return;
+    // Handle click
+  };
+  
+  return <button onClick={handleClick}>Click</button>;
+}
+
+Event Handler with Arguments:
+function App() {
+  const handleDelete = (id) => {
+    console.log("Deleting item:", id);
+  };
+  
+  return (
+    <button onClick={() => handleDelete(123)}>Delete</button>
+  );
+}
+
+Multiple Events:
+<div
+  onClick={handleClick}
+  onMouseEnter={handleMouseEnter}
+  onMouseLeave={handleMouseLeave}
+>
+  Hover and click me
+</div>
+
+Best Practices:
+
+1. Name handlers clearly:
+✅ handleClick, handleSubmit, handleChange
+❌ doStuff, fn1, handler
+
+2. Keep handlers simple:
+✅ Extract complex logic to separate functions
+❌ Long inline functions
+
+3. Use function references when possible:
+✅ onClick={handleClick}
+❌ onClick={() => handleClick()} (unless passing args)
+
+4. Prevent default for forms:
+✅ e.preventDefault() in onSubmit
+❌ Forgetting and causing page reload
+
+5. Clean up event listeners:
+If adding manual listeners with addEventListener, clean up in useEffect:
+
+useEffect(() => {
+  const handler = (e) => console.log(e);
+  window.addEventListener("resize", handler);
+  
+  return () => window.removeEventListener("resize", handler);
+}, []);
+
+Common Mistakes:
+
+❌ Calling function instead of passing reference:
+<button onClick={handleClick()}>Click</button>
+
+✅ Pass function reference:
+<button onClick={handleClick}>Click</button>
+
+❌ Forgetting e.preventDefault():
+<form onSubmit={handleSubmit}>  // Page reloads
+
+✅ Prevent default:
+const handleSubmit = (e) => {
+  e.preventDefault();
+  // ...
+};
+
+❌ Creating new function on every render:
+// OK for simple cases, but avoid in lists
+{items.map(item => (
+  <button onClick={() => handleClick(item.id)}>Delete</button>
+))}
+
+✅ Use callback or memoization:
+const handleClick = useCallback((id) => {
+  // ...
+}, []);
+
+Synthetic Events vs Native Events:
+React uses synthetic events for cross-browser compatibility.
+Access native event with e.nativeEvent if needed.
+
+React Events (Synthetic):
+- Cross-browser compatible
+- Pooled and reused (don't access async)
+- Same interface across browsers
+
+Native Events:
+- Browser-specific
+- Not pooled
+- Access with e.nativeEvent
+
+Key Takeaway:
+Event handling in React is similar to HTML but uses camelCase, passes function references, and provides synthetic events for consistency. Always use e.preventDefault() for forms and pass arguments via arrow functions when needed.

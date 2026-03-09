@@ -1,0 +1,155 @@
+Component Composition is the practice of building complex UIs by combining simpler components.
+
+Key Points About Component Composition:
+1. children prop → components can wrap other components
+2. Named props → pass components as props (header, footer, sidebar)
+3. Composition over inheritance → React favors composition
+4. Flexible and reusable → mix and match components
+
+Why Component Composition Matters:
+It's the React way of building UIs.
+More flexible than class inheritance.
+Makes components more reusable and testable.
+Encourages breaking UI into smaller pieces.
+
+The children Prop:
+React automatically provides props.children - everything between opening/closing tags.
+
+function Card({ children }) {
+  return <div className="card">{children}</div>;
+}
+
+// Usage
+<Card>
+  <h2>Title</h2>
+  <p>Content</p>
+</Card>
+
+Named Props for Composition:
+Instead of just children, you can accept multiple components as props.
+
+function Layout({ header, sidebar, children }) {
+  return (
+    <div>
+      <header>{header}</header>
+      <div>
+        <aside>{sidebar}</aside>
+        <main>{children}</main>
+      </div>
+    </div>
+  );
+}
+
+// Usage
+<Layout
+  header={<Header />}
+  sidebar={<Sidebar />}
+>
+  <MainContent />
+</Layout>
+
+Composition Patterns:
+
+1. Wrapper Components:
+Components that wrap and enhance other components.
+
+function Container({ children }) {
+  return <div style={{ maxWidth: "1200px", margin: "0 auto" }}>{children}</div>;
+}
+
+2. Slots Pattern:
+Multiple named "slots" for content.
+
+function Dialog({ title, content, actions }) {
+  return (
+    <div className="dialog">
+      <h2>{title}</h2>
+      <div>{content}</div>
+      <div>{actions}</div>
+    </div>
+  );
+}
+
+3. Render Props (advanced composition):
+Passing functions as children for dynamic rendering.
+
+<DataProvider>
+  {(data) => <Display data={data} />}
+</DataProvider>
+
+Composition vs Inheritance:
+
+Inheritance (not recommended in React):
+class UserCard extends Card {
+  // ...
+}
+
+Composition (React way):
+function UserCard() {
+  return (
+    <Card>
+      <UserInfo />
+    </Card>
+  );
+}
+
+Benefits of Composition:
+✅ More flexible - combine components in any way
+✅ Easier to understand - explicit relationships
+✅ Better testability - test components independently
+✅ Encourages small, focused components
+✅ No deep inheritance hierarchies
+
+Real-World Examples:
+
+1. Modal Dialog:
+<Modal>
+  <ModalHeader>
+    <h2>Confirm Action</h2>
+  </ModalHeader>
+  <ModalBody>
+    <p>Are you sure?</p>
+  </ModalBody>
+  <ModalFooter>
+    <Button>Cancel</Button>
+    <Button>Confirm</Button>
+  </ModalFooter>
+</Modal>
+
+2. Form with Layout:
+<Form onSubmit={handleSubmit}>
+  <FormRow>
+    <Label>Name</Label>
+    <Input name="name" />
+  </FormRow>
+  <FormRow>
+    <Label>Email</Label>
+    <Input name="email" type="email" />
+  </FormRow>
+</Form>
+
+3. Dashboard Layout:
+<Dashboard>
+  <Sidebar>
+    <Nav items={navItems} />
+  </Sidebar>
+  <MainContent>
+    <Header title="Dashboard" />
+    <Widget title="Sales">
+      <SalesChart data={sales} />
+    </Widget>
+  </MainContent>
+</Dashboard>
+
+Best Practices:
+1. Keep components small and focused
+2. Use composition to combine them
+3. Prefer props.children for simple wrappers
+4. Use named props for multiple slots
+5. Think in terms of "has-a" not "is-a" relationships
+
+Common Mistakes:
+❌ Creating deep component inheritance
+❌ Props drilling through many levels (use Context instead)
+❌ Making components too generic/complex
+✅ Break into smaller pieces and compose them

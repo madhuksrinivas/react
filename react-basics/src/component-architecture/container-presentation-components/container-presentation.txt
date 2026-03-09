@@ -1,0 +1,159 @@
+Container and Presentation Components pattern separates logic from UI.
+
+Key Points:
+1. Container (Smart) Components → handle logic, state, side effects
+2. Presentation (Dumb) Components → display UI, receive props
+3. Separation of concerns → easier to test and maintain
+4. Reusability → presentation components can be reused
+
+Why This Pattern Matters:
+Makes components easier to understand.
+Presentation components are highly reusable.
+Easier to test - presentation components are pure functions.
+Better separation of concerns.
+
+Container Components (Smart/Stateful):
+- Handle state management
+- Make API calls
+- Handle side effects (useEffect)
+- Pass data and callbacks to presentation components
+- Usually have little to no styling
+
+Example:
+function UserContainer() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    fetchUsers().then(data => {
+      setUsers(data);
+      setLoading(false);
+    });
+  }, []);
+  
+  if (loading) return <Spinner />;
+  
+  return <UserList users={users} />;
+}
+
+Presentation Components (Dumb/Stateless):
+- Receive data via props
+- Display UI elements
+- Emit events via callbacks
+- Have no state (or minimal UI state)
+- Focus on how things look
+
+Example:
+function UserList({ users, onUserClick }) {
+  return (
+    <ul>
+      {users.map(user => (
+        <li key={user.id} onClick={() => onUserClick(user)}>
+          {user.name}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+Typical Structure:
+
+containers/
+  UserContainer.jsx      // Logic, state, API calls
+  PostContainer.jsx
+
+components/
+  UserList.jsx          // Pure UI
+  PostCard.jsx
+
+Container Example (Full):
+function TodoContainer() {
+  const [todos, setTodos] = useState([]);
+  
+  const addTodo = (text) => {
+    setTodos([...todos, { id: Date.now(), text }]);
+  };
+  
+  const deleteTodo = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+  
+  return (
+    <div>
+      <TodoForm onSubmit={addTodo} />
+      <TodoList todos={todos} onDelete={deleteTodo} />
+    </div>
+  );
+}
+
+Presentation Example (Full):
+function TodoList({ todos, onDelete }) {
+  return (
+    <ul>
+      {todos.map(todo => (
+        <li key={todo.id}>
+          {todo.text}
+          <button onClick={() => onDelete(todo.id)}>Delete</button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+Benefits:
+✅ Better separation of concerns
+✅ Presentation components are reusable
+✅ Easier to test presentation components (pure functions)
+✅ Easier to understand - each has clear responsibility
+✅ Can swap out presentation components easily
+
+Testing Benefits:
+
+Container (integration test):
+test('loads and displays users', async () => {
+  render(<UserContainer />);
+  await waitFor(() => {
+    expect(screen.getByText('Alice')).toBeInTheDocument();
+  });
+});
+
+Presentation (unit test):
+test('displays users', () => {
+  const users = [{ id: 1, name: 'Alice' }];
+  render(<UserList users={users} />);
+  expect(screen.getByText('Alice')).toBeInTheDocument();
+});
+
+Modern Alternative - Hooks:
+With hooks, this pattern is less strict. You can extract logic into custom hooks:
+
+function useUsers() {
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    fetchUsers().then(setUsers);
+  }, []);
+  return users;
+}
+
+function UserList() {
+  const users = useUsers(); // Logic in hook
+  return <ul>...</ul>;      // UI in component
+}
+
+When to Use:
+✅ Complex data fetching
+✅ Need to reuse presentation logic
+✅ Large applications with many similar views
+✅ When testability is critical
+
+When NOT to Use:
+❌ Simple components
+❌ Tightly coupled logic and UI
+❌ Over-engineering small features
+
+Best Practices:
+1. Containers pass only necessary props
+2. Presentation components don't know where data comes from
+3. Callbacks are passed down for user actions
+4. Keep presentation components pure when possible
+5. Consider custom hooks as modern alternative

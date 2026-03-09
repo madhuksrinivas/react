@@ -1,0 +1,168 @@
+Lifting State Up is a pattern where you move shared state to the closest common ancestor component.
+
+Key Points About Lifting State Up:
+1. Share state between components → move it to parent
+2. Single source of truth → state lives in one place
+3. Inverse data flow → children notify parent of changes via callbacks
+4. Keeps components in sync → all children get same data
+
+Why Lifting State Up Matters:
+Multiple components often need to share and sync state.
+React's data flows down (one-way), so shared state goes up.
+Prevents state duplication and sync issues.
+Makes data flow explicit and predictable.
+
+The Problem:
+Two components need to share state, but state is local.
+
+function InputA() {
+  const [value, setValue] = useState("");
+  return <input value={value} onChange={e => setValue(e.target.value)} />;
+}
+
+function InputB() {
+  const [value, setValue] = useState("");
+  return <input value={value} onChange={e => setValue(e.target.value)} />;
+}
+
+// These two inputs have separate states - they won't sync!
+
+The Solution - Lift State Up:
+Move the shared state to the parent component.
+
+function Parent() {
+  const [value, setValue] = useState("");
+  
+  return (
+    <>
+      <InputA value={value} onChange={setValue} />
+      <InputB value={value} onChange={setValue} />
+    </>
+  );
+}
+
+function InputA({ value, onChange }) {
+  return <input value={value} onChange={e => onChange(e.target.value)} />;
+}
+
+function InputB({ value, onChange }) {
+  return <input value={value} onChange={e => onChange(e.target.value)} />;
+}
+
+// Now both inputs share the same state and stay in sync!
+
+How It Works:
+
+1. Parent owns the state:
+const [sharedData, setSharedData] = useState(initialValue);
+
+2. Parent passes state as props:
+<ChildA data={sharedData} />
+<ChildB data={sharedData} />
+
+3. Parent passes callbacks to update state:
+<ChildA data={sharedData} onChange={setSharedData} />
+
+4. Children call callbacks when they need to update:
+<input value={data} onChange={e => onChange(e.target.value)} />
+
+Real-World Example - Filter and List:
+
+// Before lifting - separate states
+function FilterInput() {
+  const [filter, setFilter] = useState("");
+  return <input value={filter} onChange={e => setFilter(e.target.value)} />;
+}
+
+function ItemList() {
+  const [items] = useState(["Apple", "Banana", "Cherry"]);
+  // Can't access filter here!
+  return <ul>{items.map(item => <li>{item}</li>)}</ul>;
+}
+
+// After lifting - shared state
+function App() {
+  const [filter, setFilter] = useState("");
+  const [items] = useState(["Apple", "Banana", "Cherry"]);
+  
+  const filteredItems = items.filter(item =>
+    item.toLowerCase().includes(filter.toLowerCase())
+  );
+  
+  return (
+    <>
+      <FilterInput value={filter} onChange={setFilter} />
+      <ItemList items={filteredItems} />
+    </>
+  );
+}
+
+function FilterInput({ value, onChange }) {
+  return <input value={value} onChange={e => onChange(e.target.value)} />;
+}
+
+function ItemList({ items }) {
+  return <ul>{items.map(item => <li key={item}>{item}</li>)}</ul>;
+}
+
+When to Lift State Up:
+✅ Two sibling components need same data
+✅ Child needs to update parent's state
+✅ Multiple components need to stay in sync
+✅ You need a "single source of truth"
+
+When NOT to Lift:
+❌ State is only used by one component
+❌ Lifting too high (causes unnecessary re-renders)
+❌ Better solved with Context API
+
+Alternative Solutions:
+
+1. Context API (for deeply nested components):
+const ThemeContext = createContext();
+
+function App() {
+  const [theme, setTheme] = useState("light");
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      <DeepChild />
+    </ThemeContext.Provider>
+  );
+}
+
+2. State Management Libraries (for complex apps):
+Redux, Zustand, Jotai, Recoil
+
+Best Practices:
+1. Lift state only as high as needed
+2. Keep state as local as possible
+3. Use callbacks for inverse data flow
+4. Consider Context for deeply nested components
+5. Name callbacks clearly (onFilterChange, onUserSelect)
+
+Common Pattern - Controlled Components:
+Lifting state up is how controlled components work:
+
+function Form() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  
+  return (
+    <>
+      <Input label="Name" value={name} onChange={setName} />
+      <Input label="Email" value={email} onChange={setEmail} />
+    </>
+  );
+}
+
+function Input({ label, value, onChange }) {
+  return (
+    <label>
+      {label}:
+      <input value={value} onChange={e => onChange(e.target.value)} />
+    </label>
+  );
+}
+
+Performance Note:
+Lifting state can cause more re-renders. If the parent re-renders, all children re-render too. Use React.memo or split into smaller components if needed.

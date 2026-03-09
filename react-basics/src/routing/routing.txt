@@ -1,0 +1,511 @@
+REACT ROUTER
+============
+
+React Router is the standard routing library for React applications. It enables navigation 
+between different components/views, manages browser history, and handles URL parameters.
+
+TABLE OF CONTENTS
+-----------------
+1. Installation
+2. Basic Setup
+3. Core Components
+4. Route Patterns
+5. Navigation Methods
+6. URL Parameters
+7. Nested Routes
+8. Programmatic Navigation
+9. Navigation Hooks
+10. Common Patterns
+11. Best Practices
+
+================================================================================
+
+1. INSTALLATION
+---------------
+npm install react-router-dom
+
+For React 18+, use React Router v6 or later.
+
+2. BASIC SETUP
+--------------
+Wrap your app with BrowserRouter to enable routing:
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+Components:
+- BrowserRouter: Uses HTML5 history API (most common)
+- HashRouter: Uses URL hash (#) for routing
+- Routes: Container for Route components
+- Route: Defines path-component mapping
+
+3. CORE COMPONENTS
+------------------
+BrowserRouter
+-------------
+- Wraps entire application
+- Manages browser history
+- Provides routing context
+
+<BrowserRouter>
+  <App />
+</BrowserRouter>
+
+Routes
+------
+- Container for all Route components
+- Matches routes and renders first match
+- Replaces Switch from v5
+
+<Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/about" element={<About />} />
+</Routes>
+
+Route
+-----
+- Defines path and component to render
+- Uses element prop (not component)
+- Supports path patterns
+
+<Route path="/users/:id" element={<UserDetail />} />
+
+Link
+----
+- Navigation without page reload
+- Replaces <a> tags
+- Maintains SPA behavior
+
+<Link to="/about">About</Link>
+
+NavLink
+-------
+- Like Link but with active styling
+- Adds className when route is active
+
+<NavLink 
+  to="/about"
+  className={({ isActive }) => isActive ? "active" : ""}
+>
+  About
+</NavLink>
+
+Outlet
+------
+- Renders child routes in nested routing
+- Used in parent route component
+
+function Dashboard() {
+  return (
+    <div>
+      <h2>Dashboard</h2>
+      <Outlet />  {/* Child routes render here */}
+    </div>
+  );
+}
+
+4. ROUTE PATTERNS
+-----------------
+Basic Route
+-----------
+<Route path="/about" element={<About />} />
+
+Dynamic Segments (Parameters)
+------------------------------
+<Route path="/users/:id" element={<UserDetail />} />
+<Route path="/posts/:postId/comments/:commentId" element={<Comment />} />
+
+Optional Parameters
+-------------------
+<Route path="/users/:id?" element={<Users />} />
+
+Wildcard (Catch All)
+--------------------
+<Route path="*" element={<NotFound />} />
+
+Index Route (Default Child)
+----------------------------
+<Route path="/dashboard" element={<Dashboard />}>
+  <Route index element={<DashboardHome />} />
+  <Route path="settings" element={<Settings />} />
+</Route>
+
+5. NAVIGATION METHODS
+---------------------
+Using Link
+----------
+<Link to="/about">About</Link>
+<Link to="/users/123">User 123</Link>
+
+Using NavLink
+-------------
+<NavLink 
+  to="/about"
+  style={({ isActive }) => ({
+    color: isActive ? 'red' : 'blue'
+  })}
+>
+  About
+</NavLink>
+
+With State
+----------
+<Link to="/about" state={{ from: 'home' }}>
+  About
+</Link>
+
+Replace (Don't Add to History)
+-------------------------------
+<Link to="/login" replace>Login</Link>
+
+6. URL PARAMETERS
+-----------------
+useParams Hook
+--------------
+Access dynamic route parameters:
+
+// Route: /users/:id
+function UserDetail() {
+  const { id } = useParams();
+  return <div>User ID: {id}</div>;
+}
+
+Multiple Parameters
+-------------------
+// Route: /posts/:postId/comments/:commentId
+function Comment() {
+  const { postId, commentId } = useParams();
+  return <div>Post {postId}, Comment {commentId}</div>;
+}
+
+Query Parameters (useSearchParams)
+-----------------------------------
+// URL: /search?q=react&sort=asc
+function SearchResults() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const query = searchParams.get('q');
+  const sort = searchParams.get('sort');
+  
+  return (
+    <div>
+      <p>Search: {query}</p>
+      <p>Sort: {sort}</p>
+      <button onClick={() => setSearchParams({ q: query, sort: 'desc' })}>
+        Sort Descending
+      </button>
+    </div>
+  );
+}
+
+7. NESTED ROUTES
+----------------
+Parent route renders Outlet where child routes appear:
+
+Setup:
+------
+<Routes>
+  <Route path="/dashboard" element={<Dashboard />}>
+    <Route path="profile" element={<Profile />} />
+    <Route path="settings" element={<Settings />} />
+  </Route>
+</Routes>
+
+Parent Component:
+-----------------
+function Dashboard() {
+  return (
+    <div>
+      <h2>Dashboard</h2>
+      <nav>
+        <Link to="/dashboard/profile">Profile</Link>
+        <Link to="/dashboard/settings">Settings</Link>
+      </nav>
+      <Outlet />  {/* Child routes render here */}
+    </div>
+  );
+}
+
+URLs:
+- /dashboard - Shows Dashboard only
+- /dashboard/profile - Shows Dashboard with Profile inside
+- /dashboard/settings - Shows Dashboard with Settings inside
+
+Index Route:
+------------
+Default child route when parent path matches exactly:
+
+<Route path="/dashboard" element={<Dashboard />}>
+  <Route index element={<DashboardHome />} />
+  <Route path="profile" element={<Profile />} />
+</Route>
+
+8. PROGRAMMATIC NAVIGATION
+---------------------------
+useNavigate Hook
+----------------
+Navigate from JavaScript code:
+
+function Login() {
+  const navigate = useNavigate();
+  
+  const handleLogin = () => {
+    // After successful login
+    navigate('/dashboard');
+  };
+  
+  return <button onClick={handleLogin}>Login</button>;
+}
+
+Navigation Options:
+-------------------
+// Basic navigation
+navigate('/about');
+
+// Go back
+navigate(-1);
+
+// Go forward
+navigate(1);
+
+// Replace current entry (no back button)
+navigate('/login', { replace: true });
+
+// Pass state
+navigate('/profile', { state: { from: 'login' } });
+
+// Relative navigation
+navigate('../'); // Go up one level
+navigate('settings'); // Relative to current path
+
+9. NAVIGATION HOOKS
+-------------------
+useLocation
+-----------
+Access current location object:
+
+function CurrentPath() {
+  const location = useLocation();
+  
+  return (
+    <div>
+      <p>Pathname: {location.pathname}</p>
+      <p>Search: {location.search}</p>
+      <p>Hash: {location.hash}</p>
+      <p>State: {JSON.stringify(location.state)}</p>
+    </div>
+  );
+}
+
+useNavigate
+-----------
+Already covered above. Used for programmatic navigation.
+
+useParams
+---------
+Already covered above. Access URL parameters.
+
+useSearchParams
+---------------
+Already covered above. Access and modify query parameters.
+
+useMatch
+--------
+Check if current path matches a pattern:
+
+function Navigation() {
+  const match = useMatch('/users/:id');
+  
+  if (match) {
+    console.log('User ID:', match.params.id);
+  }
+  
+  return <nav>...</nav>;
+}
+
+10. COMMON PATTERNS
+-------------------
+Protected Routes
+----------------
+function ProtectedRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  return children;
+}
+
+// Usage
+<Route 
+  path="/dashboard" 
+  element={
+    <ProtectedRoute>
+      <Dashboard />
+    </ProtectedRoute>
+  } 
+/>
+
+Layout Routes
+-------------
+function Layout() {
+  return (
+    <div>
+      <Header />
+      <Sidebar />
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+<Routes>
+  <Route element={<Layout />}>
+    <Route path="/" element={<Home />} />
+    <Route path="/about" element={<About />} />
+  </Route>
+</Routes>
+
+404 Not Found
+-------------
+<Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/about" element={<About />} />
+  <Route path="*" element={<NotFound />} />
+</Routes>
+
+Breadcrumbs
+-----------
+function Breadcrumbs() {
+  const location = useLocation();
+  const paths = location.pathname.split('/').filter(x => x);
+  
+  return (
+    <nav>
+      <Link to="/">Home</Link>
+      {paths.map((path, index) => {
+        const to = `/${paths.slice(0, index + 1).join('/')}`;
+        return (
+          <span key={to}>
+            {' > '}
+            <Link to={to}>{path}</Link>
+          </span>
+        );
+      })}
+    </nav>
+  );
+}
+
+Redirect
+--------
+import { Navigate } from 'react-router-dom';
+
+<Route path="/old-path" element={<Navigate to="/new-path" replace />} />
+
+Lazy Loading with Routes
+-------------------------
+import { lazy, Suspense } from 'react';
+
+const Dashboard = lazy(() => import('./Dashboard'));
+
+<Route 
+  path="/dashboard" 
+  element={
+    <Suspense fallback={<Loading />}>
+      <Dashboard />
+    </Suspense>
+  } 
+/>
+
+11. BEST PRACTICES
+------------------
+1. Route Organization
+   - Define routes in one place
+   - Use nested routing for related pages
+   - Keep route structure flat when possible
+
+2. Use NavLink for Navigation
+   - Provides active state automatically
+   - Better UX with visual feedback
+
+3. Handle 404s
+   - Always include catch-all route
+   - Provide helpful 404 page
+
+4. Protected Routes
+   - Wrap private routes with auth check
+   - Redirect to login if not authenticated
+
+5. Lazy Load Routes
+   - Split code by route
+   - Improve initial load time
+
+6. Use Relative Paths
+   - More maintainable
+   - Easier to refactor
+
+7. Pass State Carefully
+   - Don't rely on location state for critical data
+   - State is lost on page refresh
+
+8. Avoid Nested BrowserRouter
+   - Only one BrowserRouter per app
+   - Usually in root component
+
+9. Use Outlet for Nested Routes
+   - Cleaner than manually passing children
+   - Automatically handles route matching
+
+10. Test Navigation
+    - Test all routes work
+    - Test protected routes
+    - Test 404 behavior
+
+COMMON ISSUES
+-------------
+Issue: Link doesn't work
+Fix: Ensure BrowserRouter wraps your app
+
+Issue: Nested route not rendering
+Fix: Add <Outlet /> in parent component
+
+Issue: Parameter is undefined
+Fix: Check route path matches useParams hook
+
+Issue: State is lost on refresh
+Fix: Don't rely on location state for persistence
+
+Issue: Multiple renders
+Fix: Check for infinite navigation loops
+
+SUMMARY
+-------
+✅ Install react-router-dom
+✅ Wrap app with BrowserRouter
+✅ Define routes with Routes and Route
+✅ Use Link/NavLink for navigation
+✅ Use useParams for URL parameters
+✅ Use useNavigate for programmatic navigation
+✅ Use Outlet for nested routes
+✅ Handle 404s with wildcard route
+✅ Protect routes with auth checks
+✅ Lazy load routes for performance
+
+React Router provides powerful routing capabilities for single-page applications,
+enabling seamless navigation, URL management, and nested layouts.
+
+LinkTo vs navigate

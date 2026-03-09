@@ -1,0 +1,62 @@
+useRef is a Hook that returns a mutable ref object that persists across renders.
+
+Key Points About useRef:
+1. Returns an object → { current: value }
+2. Persists across renders → value doesn't reset
+3. Doesn't trigger re-render → changing ref.current is silent
+4. Two main uses → DOM access and storing mutable values
+
+Why useRef Matters:
+Access DOM elements directly (like document.getElementById).
+Store values that shouldn't trigger re-renders.
+Remember previous values between renders.
+
+Example 1 - DOM Access:
+import { useRef } from "react";
+
+function TextInput() {
+  const inputRef = useRef(null);
+  
+  const focusInput = () => {
+    inputRef.current.focus();
+  };
+  
+  return (
+    <>
+      <input ref={inputRef} />
+      <button onClick={focusInput}>Focus</button>
+    </>
+  );
+}
+
+Example 2 - Storing Mutable Values:
+function Timer() {
+  const intervalRef = useRef(null);
+  
+  const startTimer = () => {
+    intervalRef.current = setInterval(() => {
+      console.log("tick");
+    }, 1000);
+  };
+  
+  const stopTimer = () => {
+    clearInterval(intervalRef.current);
+  };
+  
+  return (
+    <>
+      <button onClick={startTimer}>Start</button>
+      <button onClick={stopTimer}>Stop</button>
+    </>
+  );
+}
+
+useRef vs useState:
+- useState: triggers re-render when updated
+- useRef: no re-render, just stores value
+
+Common Use Cases:
+- Accessing DOM elements (focus, scroll, measure)
+- Storing timer/interval IDs
+- Tracking previous props/state
+- Storing any mutable value that doesn't affect rendering

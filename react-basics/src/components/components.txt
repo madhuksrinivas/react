@@ -1,0 +1,128 @@
+Controlled vs Uncontrolled Components in React
+
+Understanding the difference between controlled and uncontrolled components is essential for form handling in React.
+
+Controlled Components:
+React state is the "single source of truth" for input values.
+
+Key Characteristics:
+1. Value controlled by state → input value={state}
+2. onChange updates state → setState on every keystroke
+3. React manages input value → predictable and controlled
+4. Easy validation → check state before submission
+
+Example:
+function ControlledForm() {
+  const [name, setName] = useState("");
+  
+  return (
+    <input
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+    />
+  );
+}
+
+Pros:
+✅ Full control over input value
+✅ Easy to validate in real-time
+✅ Can enforce formatting (uppercase, phone number)
+✅ Predictable behavior
+✅ Easy to test
+
+Cons:
+❌ More boilerplate code
+❌ State updates on every keystroke (usually not a problem)
+
+Uncontrolled Components:
+DOM is the source of truth, accessed via refs.
+
+Key Characteristics:
+1. Value stored in DOM → use ref to access
+2. No onChange needed → DOM handles input
+3. Access value when needed → usually on submit
+4. Use defaultValue → not value
+
+Example:
+function UncontrolledForm() {
+  const nameRef = useRef(null);
+  
+  const handleSubmit = () => {
+    console.log(nameRef.current.value);
+  };
+  
+  return (
+    <input
+      ref={nameRef}
+      defaultValue=""
+    />
+  );
+}
+
+Pros:
+✅ Less code
+✅ Easier for simple forms
+✅ Better for integrating non-React code
+✅ Good for file inputs (always uncontrolled)
+
+Cons:
+❌ Less control over input
+❌ Harder to validate in real-time
+❌ Can't easily format or restrict input
+❌ More DOM manipulation
+
+When to Use Each:
+
+Use Controlled Components (recommended):
+✅ Most forms
+✅ Need validation
+✅ Need to format/restrict input
+✅ Multiple inputs that depend on each other
+✅ Dynamic forms
+
+Use Uncontrolled Components:
+✅ Very simple forms
+✅ File uploads (no choice)
+✅ Integrating with non-React libraries
+✅ Quick prototypes
+
+Key Differences:
+
+| Feature | Controlled | Uncontrolled |
+|---------|-----------|--------------|
+| Value source | React state | DOM |
+| Update trigger | onChange | Manual ref access |
+| Validation | Easy (real-time) | Manual (on submit) |
+| Code amount | More | Less |
+| React way | Yes ✅ | Legacy approach |
+
+File Inputs:
+File inputs are always uncontrolled in React (security reasons):
+
+<input
+  type="file"
+  ref={fileRef}
+  onChange={handleFileChange}
+/>
+
+Best Practice:
+Default to controlled components for most cases. Only use uncontrolled when you have a specific reason (integration, file uploads, or very simple forms).
+
+Mixed Approach:
+You can mix both in the same form if needed:
+
+function MixedForm() {
+  const [email, setEmail] = useState(""); // Controlled
+  const fileRef = useRef(null); // Uncontrolled
+  
+  return (
+    <form>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input type="file" ref={fileRef} />
+    </form>
+  );
+}

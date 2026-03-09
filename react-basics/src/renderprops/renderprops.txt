@@ -1,0 +1,26 @@
+Render Props is a pattern for sharing code between components using a prop whose value is a function.
+
+Key Points About Render Props:
+1. A function as a prop → instead of passing data, you pass a function that returns JSX.
+2. The component calls the function → and passes data to it for rendering.
+3. Flexible rendering → different consumers can render the shared data differently.
+4. Alternative to HOCs → achieves similar code reuse without component wrapping.
+
+Why Render Props Matter:
+They enable logic reuse while keeping components flexible.
+They give the consumer control over what gets rendered.
+They make component behavior composable.
+
+Example:
+// Component with logic
+function DataProvider({ render }) {
+  const data = fetchData();
+  return render(data);
+}
+
+// Consumer decides how to render
+<DataProvider render={(data) => <div>{data}</div>} />
+
+The DataProvider handles the logic (fetching data).
+The consumer decides how to display it through the render prop.
+Different consumers can use the same DataProvider with different UI.

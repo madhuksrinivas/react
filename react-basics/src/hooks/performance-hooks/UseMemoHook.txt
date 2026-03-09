@@ -1,0 +1,46 @@
+useMemo is a Hook that caches the result of a calculation between renders.
+
+Key Points About useMemo:
+1. Performance optimization → avoids expensive recalculations
+2. Memoizes return value → caches result until dependencies change
+3. Dependency array required → re-calculates when deps change
+4. Don't overuse → adds overhead, only use for expensive operations
+
+Why useMemo Matters:
+Prevents unnecessary recalculations on every render.
+Improves performance for computationally expensive operations.
+Helps with referential equality for objects/arrays passed as props.
+
+Example:
+import { useState, useMemo } from "react";
+
+function FilteredList({ items, query }) {
+  // Without useMemo: filters on every render
+  // With useMemo: only filters when items or query changes
+  const filteredItems = useMemo(() => {
+    console.log("Filtering...");
+    return items.filter(item => 
+      item.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [items, query]);
+  
+  return (
+    <ul>
+      {filteredItems.map(item => <li key={item}>{item}</li>)}
+    </ul>
+  );
+}
+
+When to use useMemo:
+✅ Expensive calculations (sorting, filtering large arrays)
+✅ Preventing child re-renders (when passing objects/arrays)
+✅ Complex derived state
+
+When NOT to use:
+❌ Simple calculations (math operations, string concatenation)
+❌ Every single value (adds overhead)
+❌ As a substitute for proper component architecture
+
+useMemo vs useCallback:
+- useMemo: caches a value
+- useCallback: caches a function

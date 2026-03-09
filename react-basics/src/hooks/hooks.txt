@@ -1,0 +1,28 @@
+React provides a set of built‑in hooks, which can be grouped into categories: 
+State Hooks, Effect Hooks, Context Hooks, Ref Hooks, and Performance Hooks. 
+In addition, you can create your own custom hooks.
+
+Key Notes:
+Custom Hooks → You can build your own hooks by combining built‑in ones (e.g., useFetch for data fetching).
+React Query & Redux → These libraries provide their own hooks (useQuery, useMutation, useSelector, useDispatch) built on top of React’s hook system.
+TypeScript → Works seamlessly with hooks, adding type safety to state, props, and custom hooks.
+
+Why Hooks Matter?
+They eliminate the need for class components.
+They make code more readable, reusable, and testable.
+They encourage a functional programming style in React.
+
+State Hooks: useState, useReducer
+
+Effect Hooks: useEffect, useLayoutEffect, useInsertionEffect
+
+Context Hooks: useContext
+
+Ref Hooks: useRef, useImperativeHandle
+
+Performance Hooks: useMemo, useCallback, useTransition, useDeferredValue
+
+Other Utilities: useId, useDebugValue, useSyncExternalStore
+
+Custom Hooks:
+Any user‑defined hook built by combining built‑in hooks (e.g., useFetch, useLocalStorage).

@@ -1,0 +1,56 @@
+useCallback is a Hook that returns a memoized callback function.
+
+Key Points About useCallback:
+1. Caches function reference → same function between renders
+2. Prevents unnecessary re-renders → when passing to child components
+3. Dependency array required → new function when deps change
+4. Works with React.memo → optimized child components need stable references
+
+Why useCallback Matters:
+Functions are recreated on every render by default.
+Child components receiving callbacks may re-render unnecessarily.
+useCallback ensures function reference stays the same.
+
+Example:
+import { useState, useCallback, memo } from "react";
+
+const Button = memo(({ onClick, label }) => {
+  console.log(`${label} rendered`);
+  return <button onClick={onClick}>{label}</button>;
+});
+
+function Parent() {
+  const [count, setCount] = useState(0);
+  
+  // Without useCallback: new function every render
+  // Button re-renders even though nothing changed
+  
+  // With useCallback: same function reference
+  const handleClick = useCallback(() => {
+    setCount(c => c + 1);
+  }, []);
+  
+  return <Button onClick={handleClick} label="Click me" />;
+}
+
+useCallback is essentially:
+useMemo(() => fn, deps)  ===  useCallback(fn, deps)
+
+When to use useCallback:
+✅ Passing callbacks to memoized child components
+✅ Callbacks as dependencies in useEffect/useMemo
+✅ Custom hooks returning callbacks
+
+When NOT to use:
+❌ Every function (adds overhead)
+❌ Functions not passed to children
+❌ Without React.memo on child components
+
+Common Pattern:
+function Parent() {
+  const handleSubmit = useCallback((data) => {
+    // API call or state update
+  }, [dependencies]);
+  
+  return <Form onSubmit={handleSubmit} />;
+}

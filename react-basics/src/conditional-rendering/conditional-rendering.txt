@@ -1,0 +1,95 @@
+Conditional Rendering is how you show different UI based on conditions in React.
+
+Key Points About Conditional Rendering:
+1. Multiple approaches → if/else, ternary, logical &&, switch
+2. JavaScript expressions → use standard JS logic in JSX
+3. Choose the right method → readability matters
+4. Can return null → to render nothing
+
+Why Conditional Rendering Matters:
+Most UIs need to show different content based on state.
+Essential for authentication, loading states, permissions.
+Makes components dynamic and responsive to data.
+
+Methods of Conditional Rendering:
+
+Method 1 - if/else with Early Return:
+function Greeting({ isLoggedIn }) {
+  if (!isLoggedIn) {
+    return <p>Please log in</p>;
+  }
+  
+  return <p>Welcome back!</p>;
+}
+
+Best for: Authentication checks, loading states, error boundaries
+
+Method 2 - Ternary Operator:
+function Status({ isOnline }) {
+  return (
+    <div>
+      {isOnline ? <p>Online</p> : <p>Offline</p>}
+    </div>
+  );
+}
+
+Best for: Inline if/else, toggling between two elements
+
+Method 3 - Logical && Operator:
+function Notification({ hasMessages }) {
+  return (
+    <div>
+      {hasMessages && <p>You have new messages</p>}
+    </div>
+  );
+}
+
+Best for: Show/hide single element, optional rendering
+
+Method 4 - Switch/Case Pattern:
+function Badge({ status }) {
+  const getBadge = () => {
+    switch (status) {
+      case "active":
+        return <span>🟢 Active</span>;
+      case "away":
+        return <span>🟡 Away</span>;
+      case "offline":
+        return <span>🔴 Offline</span>;
+      default:
+        return null;
+    }
+  };
+  
+  return <div>{getBadge()}</div>;
+}
+
+Best for: Multiple conditions, complex logic
+
+Common Patterns:
+
+Loading State:
+if (loading) return <Spinner />;
+if (error) return <Error message={error} />;
+return <Content data={data} />;
+
+Permission Check:
+{user.isAdmin && <AdminPanel />}
+{user.isPremium ? <PremiumFeatures /> : <FreeFeatures />}
+
+Empty State:
+{items.length === 0 ? (
+  <p>No items found</p>
+) : (
+  <ItemList items={items} />
+)}
+
+Avoid These:
+❌ {condition ? <Component /> : null}  // unnecessary null
+✅ {condition && <Component />}        // cleaner
+
+❌ Too many nested ternaries (hard to read)
+✅ Extract to separate functions or components
+
+Performance Note:
+React only renders what's returned - conditional branches that aren't taken don't create elements.

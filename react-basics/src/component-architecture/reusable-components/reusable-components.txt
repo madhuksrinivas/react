@@ -1,0 +1,251 @@
+Reusable Components are generic, configurable components that can be used in multiple places with different data and configurations.
+
+Key Points About Reusable Components:
+1. Generic and flexible → accept props for customization
+2. Single responsibility → do one thing well
+3. Composable → can be combined with other components
+4. Consistent → provide uniform UI/behavior across app
+
+Why Reusable Components Matter:
+Write once, use everywhere - reduces duplication.
+Ensures consistency across the application.
+Easier to maintain - fix once, fixes everywhere.
+Speeds up development - build faster with existing pieces.
+
+Characteristics of Good Reusable Components:
+
+1. Accept Props for Customization:
+function Button({ children, variant, size, onClick }) {
+  return <button className={`btn-${variant} btn-${size}`} onClick={onClick}>
+    {children}
+  </button>;
+}
+
+// Use with different props
+<Button variant="primary" size="large">Save</Button>
+<Button variant="danger" size="small">Delete</Button>
+
+2. Have Sensible Defaults:
+function Input({ type = "text", placeholder = "", value, onChange }) {
+  return <input type={type} placeholder={placeholder} value={value} onChange={onChange} />;
+}
+
+// Works without all props
+<Input value={name} onChange={setName} />
+
+3. Are Well-Documented:
+// Props:
+// - variant: "primary" | "secondary" | "success" | "danger"
+// - size: "small" | "medium" | "large"
+// - disabled: boolean
+// - onClick: function
+function Button({ variant, size, disabled, onClick, children }) { ... }
+
+4. Handle Edge Cases:
+function Avatar({ src, alt, fallback = "👤" }) {
+  const [error, setError] = useState(false);
+  
+  if (error || !src) {
+    return <span>{fallback}</span>;
+  }
+  
+  return <img src={src} alt={alt} onError={() => setError(true)} />;
+}
+
+Common Reusable Components:
+
+1. Button Component:
+function Button({ 
+  children, 
+  variant = "primary", 
+  size = "medium", 
+  disabled = false,
+  onClick 
+}) {
+  return (
+    <button 
+      className={`btn btn-${variant} btn-${size}`}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
+2. Input Component:
+function Input({ 
+  label, 
+  type = "text", 
+  value, 
+  onChange, 
+  error,
+  placeholder 
+}) {
+  return (
+    <div className="input-group">
+      {label && <label>{label}</label>}
+      <input 
+        type={type}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+      />
+      {error && <span className="error">{error}</span>}
+    </div>
+  );
+}
+
+3. Card Component:
+function Card({ title, children, footer, actions }) {
+  return (
+    <div className="card">
+      {title && <div className="card-header">{title}</div>}
+      <div className="card-body">{children}</div>
+      {footer && <div className="card-footer">{footer}</div>}
+      {actions && <div className="card-actions">{actions}</div>}
+    </div>
+  );
+}
+
+4. Modal Component:
+function Modal({ isOpen, onClose, title, children }) {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{title}</h2>
+          <button onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+5. Loading Spinner:
+function Spinner({ size = "medium", color = "blue" }) {
+  return (
+    <div className={`spinner spinner-${size}`} style={{ borderColor: color }}>
+      Loading...
+    </div>
+  );
+}
+
+Best Practices for Reusable Components:
+
+1. Keep Them Simple:
+✅ Single responsibility
+✅ Limited props (5-10 max)
+❌ Too many features
+
+2. Make Them Flexible:
+✅ Accept custom className or style props
+✅ Allow children for content
+✅ Support callbacks for events
+
+function Button({ children, className, style, onClick }) {
+  return (
+    <button 
+      className={`btn ${className}`}
+      style={style}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
+3. Provide Good Defaults:
+✅ Most props optional
+✅ Sensible default values
+✅ Works without configuration
+
+4. Think About Composition:
+Instead of one mega-component, create small ones that compose:
+
+// ❌ Monolithic
+<MegaCard 
+  hasTitle 
+  hasFooter 
+  hasActions 
+  hasBorder 
+  hasShadow
+/>
+
+// ✅ Composable
+<Card>
+  <CardHeader title="Title" />
+  <CardBody>Content</CardBody>
+  <CardFooter>Footer</CardFooter>
+</Card>
+
+5. Document Usage:
+Add JSDoc comments or create a style guide:
+
+/**
+ * Button component
+ * @param {string} variant - "primary" | "secondary" | "success" | "danger"
+ * @param {string} size - "small" | "medium" | "large"
+ * @param {boolean} disabled - Disable the button
+ * @param {function} onClick - Click handler
+ */
+
+Testing Reusable Components:
+Test all props and variations:
+
+test('renders primary button', () => {
+  render(<Button variant="primary">Click</Button>);
+  expect(screen.getByText('Click')).toHaveClass('btn-primary');
+});
+
+test('handles click events', () => {
+  const onClick = jest.fn();
+  render(<Button onClick={onClick}>Click</Button>);
+  fireEvent.click(screen.getByText('Click'));
+  expect(onClick).toHaveBeenCalled();
+});
+
+When to Create Reusable Components:
+✅ UI pattern used 3+ times
+✅ Component is generic enough
+✅ Saves significant code duplication
+✅ Improves consistency
+
+When NOT to:
+❌ Too specific to one use case
+❌ Would need many props to handle variations
+❌ Over-engineering simple markup
+
+Common Pitfall - Over-Abstraction:
+Don't make components so generic they become hard to use:
+
+// ❌ Too abstract
+<GenericComponent 
+  mode="button" 
+  type="submit" 
+  styling="primary"
+  behavior="clickable"
+/>
+
+// ✅ Clear purpose
+<SubmitButton variant="primary" onClick={handleSubmit} />
+
+Building a Component Library:
+Organize reusable components in a folder structure:
+
+components/
+  Button/
+    Button.jsx
+    Button.test.jsx
+    Button.stories.jsx
+  Input/
+    Input.jsx
+    Input.test.jsx
+  Card/
+    Card.jsx
+    Card.test.jsx
+
+Use tools like Storybook to document and showcase components.

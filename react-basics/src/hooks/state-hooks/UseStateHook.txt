@@ -1,0 +1,31 @@
+useState is a Hook that lets you add state to functional components.
+
+Key Points About useState:
+1. Returns an array → [currentState, setterFunction]
+2. State persists across re-renders → component remembers its state
+3. Setter triggers re-render → when you call setState, React re-renders the component
+4. Can hold any type → string, number, boolean, object, array, etc.
+
+Why useState Matters:
+Before hooks, only class components could have state.
+useState makes functional components stateful and simpler.
+It's the most commonly used React hook.
+
+Example:
+import { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+
+Important:
+- State updates are asynchronous and batched for performance
+- Use functional updates when new state depends on previous: setCount(prev => prev + 1)
+- Never mutate state directly - always use the setter function

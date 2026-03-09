@@ -1,0 +1,59 @@
+Custom Hooks are functions that let you extract and reuse stateful logic between components.
+
+Key Points About Custom Hooks:
+1. Start with "use" → naming convention enforced by React
+2. Compose built-in hooks → combine useState, useEffect, etc.
+3. Return anything → values, functions, arrays, objects
+4. Shareable logic → use across multiple components
+
+Why Custom Hooks Matter:
+Extract complex logic from components.
+Make code more readable and maintainable.
+Share stateful logic without wrapper components.
+
+Example - useFetch:
+import { useState, useEffect } from "react";
+
+function useFetch(url) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err);
+        setLoading(false);
+      });
+  }, [url]);
+  
+  return { data, loading, error };
+}
+
+// Usage
+function UserProfile() {
+  const { data, loading, error } = useFetch("/api/user");
+  
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error!</p>;
+  return <p>{data.name}</p>;
+}
+
+Rules for Custom Hooks:
+1. Must start with "use" prefix
+2. Can call other hooks
+3. Only call at top level (not in loops/conditions)
+4. Can be called from components or other custom hooks
+
+Common Custom Hooks:
+- useLocalStorage: sync state with localStorage
+- useFetch: data fetching with loading states
+- useDebounce: debounce values
+- useToggle: boolean state toggler
+- useOnClickOutside: detect clicks outside element
+- useWindowSize: track window dimensions

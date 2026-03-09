@@ -1,0 +1,95 @@
+Context API with useReducer is a powerful pattern for managing global state in React applications.
+
+Structure in Real-World Applications:
+This example demonstrates how to properly organize Context API code by splitting it into multiple focused files, which is the standard approach in production applications.
+
+File Organization:
+1. CartContext.jsx → Creates the context
+2. cartReducer.jsx → Defines state logic and initial state
+3. CartProvider.jsx → Combines useReducer with Context Provider
+4. useCart.jsx → Custom hook for consuming context (best practice)
+5. Consumer components → ProductList, CartItems, CartSummary
+6. Main component → Wraps app with Provider
+
+Implementation Flow (Step-by-Step):
+
+Step 1: Create CartContext.jsx
+- Create the context using createContext()
+- This is the foundation that other files will use
+
+Step 2: Create cartReducer.jsx
+- Define initialState (starting cart state)
+- Write reducer function with switch cases for actions
+- Export both initialState and cartReducer
+
+Step 3: Create CartProvider.jsx
+- Import CartContext and cartReducer
+- Use useReducer hook with cartReducer and initialState
+- Wrap children with CartContext.Provider
+- Pass state and dispatch functions as context value
+
+Step 4: Create useCart.jsx (Custom Hook)
+- Import and consume CartContext with useContext
+- Add error handling for missing provider
+- Return context value for easy consumption
+
+Step 5: Wrap App with CartProvider (in main.jsx or App.jsx)
+- Import CartProvider
+- Wrap your app component tree
+
+Step 6: Use in Components
+- Import useCart hook
+- Destructure needed values and functions
+- Use them like regular state
+
+Data Flow:
+Component → dispatch(action) → Reducer → Updates State → Context → All Subscribed Components Re-render
+
+Why This Pattern Works:
+✅ Separation of concerns → each file has one responsibility
+✅ Testability → reducer is pure function, easy to test
+✅ Scalability → add more actions without touching components
+✅ Type safety → easy to add TypeScript
+✅ No prop drilling → any component can access cart state
+✅ Custom hook → ensures context is used correctly
+
+Key Concepts:
+
+useReducer:
+- Manages complex state with multiple actions
+- Centralizes state logic in reducer function
+- Similar to Redux pattern
+
+Context API:
+- Provides global state to component tree
+- Avoids prop drilling
+- Components subscribe to updates
+
+Custom Hook (useCart):
+- Encapsulates useContext call
+- Provides better error messages
+- Single source of truth for accessing context
+
+Provider Pattern:
+<CartProvider>
+    <App />
+</CartProvider>
+
+Consumer Pattern:
+const { items, addItem } = useCart();
+
+When to Use This Pattern:
+✅ Global state (user auth, theme, shopping cart)
+✅ Deeply nested components need shared state
+✅ Multiple components need to read/update same data
+
+Alternatives:
+- Small apps: useState with prop passing
+- Complex apps: Redux, Zustand, Jotai
+- Server state: React Query, SWR
+
+Comparison with Redux:
+Context + useReducer is often called "poor man's Redux"
+- Simpler setup, no extra libraries
+- Good for small-medium apps
+- Redux adds middleware, devtools, better performance for large apps

@@ -1,0 +1,95 @@
+List Rendering is how you display arrays of data as multiple elements in React.
+
+Key Points About List Rendering:
+1. Use .map() → transform each array item into a JSX element.
+2. Keys are required → each element needs a unique key prop.
+3. Keys must be stable → use IDs, not array indexes (unless list never changes).
+4. Keys help React → identify which items changed for efficient re-rendering.
+
+Why List Rendering Matters:
+Most UIs display collections of data (users, products, posts).
+Proper keys prevent bugs and improve performance.
+It's one of the most common patterns in React.
+
+Example:
+const fruits = ["Apple", "Banana", "Cherry"];
+
+function FruitList() {
+  return (
+    <ul>
+      {fruits.map((fruit, index) => (
+        <li key={index}>{fruit}</li>
+      ))}
+    </ul>
+  );
+}
+
+Better with unique IDs:
+const fruits = [
+  { id: 1, name: "Apple" },
+  { id: 2, name: "Banana" },
+];
+
+function FruitList() {
+  return (
+    <ul>
+      {fruits.map((fruit) => (
+        <li key={fruit.id}>{fruit.name}</li>
+      ))}
+    </ul>
+  );
+}
+
+The key prop is not accessible in the component - it's internal to React.
+
+Cons of Using Index as Keys:
+1. Breaks component state → if list order changes, React may reuse wrong components.
+2. Performance issues → unnecessary re-renders when items are added/removed/reordered.
+3. Causes bugs with forms → input values may get associated with wrong items.
+4. Not truly unique → same index reused after deletions/insertions.
+
+Example of Bug with Index Keys:
+const [items, setItems] = useState([
+    { id: 1, name: "Apple" },
+    { id: 2, name: "Banana" },
+    { id: 3, name: "Cherry" }
+]);
+
+// BAD: Using index as key
+function BadList() {
+    return (
+        <ul>
+            {items.map((item, index) => (
+                <li key={index}>
+                    <input type="text" defaultValue={item.name} />
+                    <button onClick={() => deleteItem(index)}>Delete</button>
+                </li>
+            ))}
+        </ul>
+    );
+}
+// Problem: If you delete "Banana", "Cherry" moves to index 1,
+// but React reuses the input element, keeping "Banana"'s value!
+
+// GOOD: Using unique ID as key
+function GoodList() {
+    return (
+        <ul>
+            {items.map((item) => (
+                <li key={item.id}>
+                    <input type="text" defaultValue={item.name} />
+                    <button onClick={() => deleteItem(item.id)}>Delete</button>
+                </li>
+            ))}
+        </ul>
+    );
+}
+// React correctly tracks each item by ID, preserving correct state.
+
+Safe to use index only when:
+- List is static (never changes)
+- Items are never reordered
+- Items are never filtered
+- List is purely presentational (no state/inputs)
+
+Always prefer stable, unique IDs (from database, UUID, etc.) over indexes.

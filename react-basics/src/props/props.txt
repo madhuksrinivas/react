@@ -1,0 +1,26 @@
+Props stand for Properties. They're how you pass data from parent to child components in React.
+
+Key Points About Props:
+1. Read-only → child components cannot modify props they receive.
+2. Passed like HTML attributes → <MyComponent name="John" age={30} />
+3. Received as an object → function MyComponent(props) { ... } or destructured → function MyComponent({ name, age }) { ... }
+4. Make components reusable → same component, different data.
+
+Why Props Matter:
+They enable component composition and data flow.
+They keep components pure and predictable.
+They're the foundation of React's one-way data flow.
+
+Example:
+// Parent component
+function App() {
+  return <Greeting name="Alice" />;
+}
+
+// Child component
+function Greeting({ name }) {
+  return <h1>Hello, {name}!</h1>;
+}
+
+The name prop flows down from App to Greeting.
+Greeting cannot change the name prop — it's immutable from the child's perspective.

@@ -1,0 +1,28 @@
+JSX stands for JavaScript XML. It's a syntax extension for JavaScript.
+
+Key Points About JSX:
+1. HTML-like syntax in JavaScript → lets you write <div>Hello World</div> directly inside your JS code.
+2. Compiles to React.createElement calls → under the hood, JSX is transformed into plain JavaScript objects that React uses to render components.
+3. Makes UI code more readable → instead of deeply nested function calls, you write markup that looks like the structure of your page.
+4. Supports expressions → you can embed JavaScript logic inside { } braces:
+
+Why JSX Matters:
+It bridges JavaScript logic and UI structure seamlessly.
+It makes React components easier to write and understand.
+It’s optional — you can use plain React.createElement calls — but JSX is the standard in most React projects.
+
+
+Let’s look at how JSX actually compiles into plain JavaScript under the hood.
+
+const element = <h1 className="title">Hello, world!</h1>;
+
+What React Really Sees:
+JSX is transformed (usually by Babel) into plain JavaScript calls to React.createElement:
+
+const element = React.createElement(
+  "h1",                     // type of element
+  { className: "title" },   // props
+  "Hello, world!"           // children
+);
+
+So JSX is just syntactic sugar for these function calls.

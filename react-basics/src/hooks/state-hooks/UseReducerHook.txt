@@ -1,0 +1,42 @@
+useReducer is a Hook for managing complex state logic with actions and a reducer function.
+
+Key Points About useReducer:
+1. Alternative to useState → better for complex state with multiple sub-values
+2. Uses reducer pattern → (state, action) => newState
+3. Centralizes state logic → all state transitions in one place
+4. More predictable → actions describe what happened
+
+Why useReducer Matters:
+Better for complex state with multiple related values.
+Makes state transitions explicit and testable.
+Similar pattern to Redux, easier to scale.
+
+Example:
+import { useReducer } from "react";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "increment":
+      return { count: state.count + 1 };
+    case "decrement":
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <button onClick={() => dispatch({ type: "increment" })}>+</button>
+      <button onClick={() => dispatch({ type: "decrement" })}>-</button>
+    </div>
+  );
+}
+
+When to use useReducer vs useState:
+- useState: simple state (single value, boolean, string)
+- useReducer: complex state (multiple values, nested objects, complex logic)

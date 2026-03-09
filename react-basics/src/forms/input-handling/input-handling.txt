@@ -1,0 +1,437 @@
+INPUT HANDLING IN REACT
+========================
+
+Input handling involves capturing, transforming, and managing user input in React forms.
+Proper input handling improves user experience and data quality.
+
+TABLE OF CONTENTS
+-----------------
+1. Basic Input Handling
+2. Input Transformation
+3. Input Filtering
+4. Input Masking
+5. Debouncing and Throttling
+6. Special Input Types
+7. Common Patterns
+8. Performance Optimization
+
+================================================================================
+
+1. BASIC INPUT HANDLING
+------------------------
+Simple Text Input:
+------------------
+const [value, setValue] = useState('');
+
+<input 
+  type="text"
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+/>
+
+Accessing Event Properties:
+----------------------------
+const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  console.log('Name:', name);
+  console.log('Value:', value);
+  console.log('Type:', type);
+  console.log('Checked:', checked);
+};
+
+Multiple Inputs (Single Handler):
+----------------------------------
+const [form, setForm] = useState({ name: '', email: '' });
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setForm({ ...form, [name]: value });
+};
+
+<input name="name" value={form.name} onChange={handleChange} />
+<input name="email" value={form.email} onChange={handleChange} />
+
+2. INPUT TRANSFORMATION
+-----------------------
+Uppercase:
+----------
+const handleUppercase = (e) => {
+  setValue(e.target.value.toUpperCase());
+};
+
+Lowercase:
+----------
+const handleLowercase = (e) => {
+  setValue(e.target.value.toLowerCase());
+};
+
+Capitalize First Letter:
+------------------------
+const handleCapitalize = (e) => {
+  const value = e.target.value;
+  const capitalized = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  setValue(capitalized);
+};
+
+Title Case:
+-----------
+const handleTitleCase = (e) => {
+  const value = e.target.value;
+  const titleCase = value
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+  setValue(titleCase);
+};
+
+Trim on Blur:
+-------------
+const handleBlur = (e) => {
+  setValue(e.target.value.trim());
+};
+
+3. INPUT FILTERING
+------------------
+Numbers Only:
+-------------
+const handleNumbersOnly = (e) => {
+  const value = e.target.value.replace(/\D/g, '');
+  setValue(value);
+};
+
+Letters Only:
+-------------
+const handleLettersOnly = (e) => {
+  const value = e.target.value.replace(/[^a-zA-Z]/g, '');
+  setValue(value);
+};
+
+Alphanumeric Only:
+------------------
+const handleAlphanumeric = (e) => {
+  const value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+  setValue(value);
+};
+
+Remove Special Characters:
+--------------------------
+const handleNoSpecialChars = (e) => {
+  const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '');
+  setValue(value);
+};
+
+Max Length:
+-----------
+const handleMaxLength = (e) => {
+  const value = e.target.value.slice(0, 10); // Max 10 chars
+  setValue(value);
+};
+
+4. INPUT MASKING
+----------------
+Phone Number (US):
+------------------
+const handlePhoneMask = (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+  
+  if (value.length > 10) value = value.slice(0, 10);
+  
+  if (value.length >= 6) {
+    value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
+  } else if (value.length >= 3) {
+    value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+  }
+  
+  setValue(value);
+};
+
+Credit Card:
+------------
+const handleCardMask = (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+  
+  if (value.length > 16) value = value.slice(0, 16);
+  
+  value = value.match(/.{1,4}/g)?.join(' ') || value;
+  
+  setValue(value);
+};
+
+Date (MM/DD/YYYY):
+------------------
+const handleDateMask = (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+  
+  if (value.length > 8) value = value.slice(0, 8);
+  
+  if (value.length >= 4) {
+    value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
+  } else if (value.length >= 2) {
+    value = `${value.slice(0, 2)}/${value.slice(2)}`;
+  }
+  
+  setValue(value);
+};
+
+Social Security Number:
+-----------------------
+const handleSSNMask = (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+  
+  if (value.length > 9) value = value.slice(0, 9);
+  
+  if (value.length >= 5) {
+    value = `${value.slice(0, 3)}-${value.slice(3, 5)}-${value.slice(5)}`;
+  } else if (value.length >= 3) {
+    value = `${value.slice(0, 3)}-${value.slice(3)}`;
+  }
+  
+  setValue(value);
+};
+
+Currency:
+---------
+const handleCurrencyMask = (e) => {
+  let value = e.target.value.replace(/[^\d.]/g, '');
+  
+  // Only one decimal point
+  const parts = value.split('.');
+  if (parts.length > 2) {
+    value = parts[0] + '.' + parts.slice(1).join('');
+  }
+  
+  // Max 2 decimal places
+  if (parts[1]?.length > 2) {
+    value = parts[0] + '.' + parts[1].slice(0, 2);
+  }
+  
+  setValue(value);
+};
+
+5. DEBOUNCING AND THROTTLING
+-----------------------------
+Debounce (Wait for User to Stop Typing):
+-----------------------------------------
+const [value, setValue] = useState('');
+const [debouncedValue, setDebouncedValue] = useState('');
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedValue(value);
+    // Make API call here
+  }, 500);
+  
+  return () => clearTimeout(timer);
+}, [value]);
+
+<input 
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+/>
+
+Custom Debounce Hook:
+---------------------
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  
+  return debouncedValue;
+}
+
+// Usage
+const [search, setSearch] = useState('');
+const debouncedSearch = useDebounce(search, 500);
+
+useEffect(() => {
+  if (debouncedSearch) {
+    // Make API call
+  }
+}, [debouncedSearch]);
+
+Throttle (Limit Execution Rate):
+---------------------------------
+function useThrottle(value, delay) {
+  const [throttledValue, setThrottledValue] = useState(value);
+  const lastRan = useRef(Date.now());
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (Date.now() - lastRan.current >= delay) {
+        setThrottledValue(value);
+        lastRan.current = Date.now();
+      }
+    }, delay - (Date.now() - lastRan.current));
+    
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  
+  return throttledValue;
+}
+
+6. SPECIAL INPUT TYPES
+----------------------
+File Input:
+-----------
+const [file, setFile] = useState(null);
+
+const handleFileChange = (e) => {
+  const selectedFile = e.target.files[0];
+  setFile(selectedFile);
+};
+
+<input type="file" onChange={handleFileChange} />
+
+File with Preview:
+------------------
+const [preview, setPreview] = useState(null);
+
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+Color Input:
+------------
+const [color, setColor] = useState('#000000');
+
+<input 
+  type="color"
+  value={color}
+  onChange={(e) => setColor(e.target.value)}
+/>
+
+Range/Slider:
+-------------
+const [volume, setVolume] = useState(50);
+
+<input 
+  type="range"
+  min="0"
+  max="100"
+  value={volume}
+  onChange={(e) => setVolume(e.target.value)}
+/>
+
+Date Input:
+-----------
+const [date, setDate] = useState('');
+
+<input 
+  type="date"
+  value={date}
+  onChange={(e) => setDate(e.target.value)}
+/>
+
+7. COMMON PATTERNS
+------------------
+Pattern 1: Controlled Input with Validation
+--------------------------------------------
+const [email, setEmail] = useState('');
+const [error, setError] = useState('');
+
+const handleChange = (e) => {
+  const value = e.target.value;
+  setEmail(value);
+  
+  if (!value.includes('@')) {
+    setError('Invalid email');
+  } else {
+    setError('');
+  }
+};
+
+Pattern 2: Auto-Submit on Enter
+--------------------------------
+const handleKeyPress = (e) => {
+  if (e.key === 'Enter') {
+    handleSubmit();
+  }
+};
+
+<input onKeyPress={handleKeyPress} />
+
+Pattern 3: Clear Button
+------------------------
+<div>
+  <input value={value} onChange={handleChange} />
+  {value && (
+    <button onClick={() => setValue('')}>Clear</button>
+  )}
+</div>
+
+Pattern 4: Character Counter
+-----------------------------
+const maxLength = 100;
+
+<div>
+  <textarea 
+    value={text}
+    onChange={(e) => setText(e.target.value)}
+    maxLength={maxLength}
+  />
+  <p>{text.length} / {maxLength}</p>
+</div>
+
+Pattern 5: Paste Handler
+-------------------------
+const handlePaste = (e) => {
+  e.preventDefault();
+  const pastedText = e.clipboardData.getData('text');
+  // Process pasted text
+  setValue(pastedText.toUpperCase());
+};
+
+<input onPaste={handlePaste} />
+
+8. PERFORMANCE OPTIMIZATION
+----------------------------
+1. Debounce Expensive Operations
+   - API calls
+   - Complex calculations
+   - Search operations
+
+2. Memoize Handlers
+   const handleChange = useCallback((e) => {
+     setValue(e.target.value);
+   }, []);
+
+3. Avoid Unnecessary Re-renders
+   - Don't create handlers in render
+   - Use memo for expensive components
+
+4. Batch State Updates
+   - Update multiple states together
+   - Reduce re-renders
+
+5. Virtualize Long Lists
+   - Use react-window or react-virtualized
+   - For autocomplete with many options
+
+SUMMARY
+-------
+✅ Use onChange for real-time updates
+✅ Transform input values as needed
+✅ Filter unwanted characters
+✅ Apply masks for formatted inputs
+✅ Debounce expensive operations
+✅ Handle different input types properly
+✅ Validate while typing or on blur
+✅ Provide clear visual feedback
+✅ Optimize performance for large forms
+✅ Use proper event handlers (onBlur, onKeyPress, etc.)
+
+Proper input handling creates a smooth user experience, prevents errors,
+and ensures data quality in React forms.

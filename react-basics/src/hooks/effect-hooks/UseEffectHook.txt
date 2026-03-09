@@ -1,0 +1,41 @@
+useEffect is a Hook for performing side effects in functional components.
+
+Key Points About useEffect:
+1. Runs after render → executes after React updates the DOM
+2. Side effects → data fetching, subscriptions, timers, DOM manipulation
+3. Dependency array → controls when effect re-runs
+4. Cleanup function → return a function to clean up (unsubscribe, clear timers)
+
+Why useEffect Matters:
+Replaces lifecycle methods (componentDidMount, componentDidUpdate, componentWillUnmount).
+Keeps side effects separate from rendering logic.
+Essential for interacting with external systems.
+
+Example:
+import { useState, useEffect } from "react";
+
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSeconds(s => s + 1);
+    }, 1000);
+    
+    // Cleanup runs on unmount
+    return () => clearInterval(timer);
+  }, []); // Empty array = run once on mount
+  
+  return <p>Seconds: {seconds}</p>;
+}
+
+Dependency Array Behavior:
+- No array: runs after every render
+- Empty []: runs once on mount
+- [dep1, dep2]: runs when dependencies change
+
+Common Use Cases:
+- Fetching data from an API
+- Setting up subscriptions or event listeners
+- Updating document.title
+- Timers and intervals

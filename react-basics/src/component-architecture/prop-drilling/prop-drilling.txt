@@ -1,0 +1,189 @@
+Prop Drilling is when you pass props through multiple component levels to reach a deeply nested component.
+
+Key Points About Prop Drilling:
+1. Props through many levels → pass data from top to bottom
+2. Intermediate components → don't use props, just pass them
+3. Becomes verbose → add/remove props affects many files
+4. Maintenance burden → hard to track where props come from
+
+Why It's a Problem:
+Makes code harder to maintain and refactor.
+Intermediate components become coupled to props they don't use.
+Adding new props requires updating many components.
+Hard to understand data flow in large apps.
+
+Example of Prop Drilling:
+
+// Level 1 - Top component with state
+function App() {
+  const [user, setUser] = useState({ name: "Alice", role: "admin" });
+  return <Dashboard user={user} />;
+}
+
+// Level 2 - Doesn't use user, just passes it
+function Dashboard({ user }) {
+  return <Sidebar user={user} />;
+}
+
+// Level 3 - Doesn't use user, just passes it
+function Sidebar({ user }) {
+  return <Navigation user={user} />;
+}
+
+// Level 4 - Doesn't use user, just passes it
+function Navigation({ user }) {
+  return <UserMenu user={user} />;
+}
+
+// Level 5 - Finally uses the prop!
+function UserMenu({ user }) {
+  return <p>Welcome, {user.name}</p>;
+}
+
+The Problem Visualized:
+App (has user) 
+  ↓ props drilling
+Dashboard (doesn't need user)
+  ↓ props drilling
+Sidebar (doesn't need user)
+  ↓ props drilling  
+Navigation (doesn't need user)
+  ↓ props drilling
+UserMenu (needs user!) ✓
+
+When Prop Drilling Becomes a Problem:
+❌ More than 2-3 levels deep
+❌ Multiple props being passed
+❌ Intermediate components don't use the props
+❌ Props are needed in many different branches
+
+Solutions:
+
+1. Context API (Recommended for deep drilling):
+import { createContext, useContext } from "react";
+
+const UserContext = createContext();
+
+function App() {
+  const [user, setUser] = useState({ name: "Alice" });
+  
+  return (
+    <UserContext.Provider value={user}>
+      <Dashboard />
+    </UserContext.Provider>
+  );
+}
+
+function UserMenu() {
+  const user = useContext(UserContext);
+  return <p>Welcome, {user.name}</p>;
+}
+
+// No need to pass props through Dashboard, Sidebar, Navigation!
+
+2. Component Composition:
+Instead of passing props down, pass the component itself:
+
+function App() {
+  const user = { name: "Alice" };
+  
+  return (
+    <Dashboard>
+      <Sidebar>
+        <Navigation>
+          <UserMenu user={user} />
+        </Navigation>
+      </Sidebar>
+    </Dashboard>
+  );
+}
+
+// Dashboard, Sidebar, Navigation don't need to know about user prop
+
+3. State Management Libraries:
+Redux, Zustand, Jotai - connect components directly to global state:
+
+function UserMenu() {
+  const user = useSelector(state => state.user);
+  return <p>Welcome, {user.name}</p>;
+}
+
+4. Custom Hooks:
+Extract data fetching logic into hooks:
+
+function useUser() {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    fetchUser().then(setUser);
+  }, []);
+  return user;
+}
+
+function UserMenu() {
+  const user = useUser(); // Fetch directly, no drilling
+  return <p>Welcome, {user.name}</p>;
+}
+
+When Prop Drilling is OK:
+✅ Only 1-2 levels deep
+✅ Props are used by intermediate components
+✅ Small, simple component tree
+✅ Props are specific to this branch of the tree
+
+When to Avoid Prop Drilling:
+❌ More than 3 levels deep
+❌ Intermediate components just pass props
+❌ Same props needed in multiple parts of tree
+❌ Props change frequently
+
+Comparison of Solutions:
+
+Prop Drilling:
++ Simple for shallow hierarchies
++ Explicit data flow
+- Verbose for deep hierarchies
+- Hard to maintain
+
+Context API:
++ No prop drilling
++ Easy to share data
+- Re-renders all consumers
+- Can be overused
+
+State Management:
++ Centralized state
++ DevTools, middleware
+- Additional complexity
+- Learning curve
+
+Best Practices:
+1. Keep component trees shallow when possible
+2. Use Context for truly global data (theme, auth, i18n)
+3. Use composition to avoid drilling
+4. Don't over-use Context - local state is often better
+5. Consider state management for complex apps
+
+Real-World Example:
+
+Bad (Prop Drilling):
+<App user={user}>
+  <Layout user={user}>
+    <Header user={user}>
+      <UserMenu user={user} />
+    </Header>
+  </Layout>
+</App>
+
+Good (Context):
+<UserProvider value={user}>
+  <App>
+    <Layout>
+      <Header>
+        <UserMenu />  {/* Uses useUser() hook */}
+      </Header>
+    </Layout>
+  </App>
+</UserProvider>
+
+Key Takeaway:
+Prop drilling isn't always bad for shallow trees, but for deeply nested components needing the same data, use Context API, composition, or state management instead.

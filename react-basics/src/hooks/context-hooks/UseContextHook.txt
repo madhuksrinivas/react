@@ -1,0 +1,49 @@
+useContext is a Hook that lets you read and subscribe to context from your component.
+
+Key Points About useContext:
+1. Avoids prop drilling → access data without passing through every level
+2. Subscribes to context → re-renders when context value changes
+3. Must have Provider → reads from nearest Provider ancestor
+4. Works with createContext → create context first, then consume with useContext
+
+Why useContext Matters:
+Eliminates passing props through multiple component levels.
+Makes global state accessible anywhere in component tree.
+Cleaner than render props or HOCs for sharing data.
+
+Example:
+import { createContext, useContext } from "react";
+
+// Create context
+const UserContext = createContext();
+
+// Provider component
+function App() {
+  const user = { name: "Alice", role: "Admin" };
+  
+  return (
+    <UserContext.Provider value={user}>
+      <Dashboard />
+    </UserContext.Provider>
+  );
+}
+
+// Consumer component (deeply nested)
+function Dashboard() {
+  return <UserProfile />;
+}
+
+function UserProfile() {
+  const user = useContext(UserContext);
+  return <p>Welcome, {user.name}!</p>;
+}
+
+Common Use Cases:
+- Theme (light/dark mode)
+- Authentication (current user)
+- Language/locale preferences
+- Global app settings
+
+Performance Note:
+All components using useContext re-render when context value changes.
+Use React.memo or split contexts to optimize.

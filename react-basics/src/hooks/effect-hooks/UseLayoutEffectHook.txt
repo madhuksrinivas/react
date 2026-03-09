@@ -1,0 +1,42 @@
+useLayoutEffect is a Hook that runs synchronously after DOM mutations but before browser paint.
+
+Key Points About useLayoutEffect:
+1. Synchronous execution → blocks browser paint until complete
+2. Same API as useEffect → but different timing
+3. Use for DOM measurements → reading layout before paint
+4. Rare use case → most effects should use useEffect
+
+Why useLayoutEffect Matters:
+Prevents visual flicker when measuring or mutating DOM.
+Ensures UI changes happen before user sees the screen.
+Critical for smooth animations and layout calculations.
+
+Example:
+import { useLayoutEffect, useRef } from "react";
+
+function Tooltip() {
+  const tooltipRef = useRef(null);
+  
+  useLayoutEffect(() => {
+    // Measure tooltip position before paint
+    const rect = tooltipRef.current.getBoundingClientRect();
+    
+    // Adjust position if it goes off-screen
+    if (rect.right > window.innerWidth) {
+      tooltipRef.current.style.left = "auto";
+      tooltipRef.current.style.right = "0";
+    }
+  }, []);
+  
+  return <div ref={tooltipRef}>Tooltip</div>;
+}
+
+useEffect vs useLayoutEffect:
+- useEffect: runs asynchronously after paint (most cases)
+- useLayoutEffect: runs synchronously before paint (measurements, flicker prevention)
+
+When to use useLayoutEffect:
+- Measuring DOM element sizes/positions
+- Scrolling to an element
+- Preventing visual flicker
+- Animations that need precise timing
