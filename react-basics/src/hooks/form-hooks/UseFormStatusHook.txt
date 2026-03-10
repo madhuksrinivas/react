@@ -1,0 +1,506 @@
+USE FORM STATUS HOOK
+====================
+
+useFormStatus is a React hook that provides information about the status of a parent
+form. It's useful for creating reusable form components that need to know if the form
+is currently submitting.
+
+IMPORTANT: This hook must be called from a component that is rendered inside a <form> element.
+
+SYNTAX
+------
+const { pending, data, method, action } = useFormStatus();
+
+Returns:
+- pending: Boolean - true when form is submitting
+- data: FormData - the form data being submitted (or null)
+- method: String - HTTP method ("get" or "post")
+- action: String/Function - form's action attribute value
+
+BASIC USAGE
+-----------
+import { useFormStatus } from 'react';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  
+  return (
+    <button disabled={pending}>
+      {pending ? 'Submitting...' : 'Submit'}
+    </button>
+  );
+}
+
+function MyForm() {
+  return (
+    <form action={handleSubmit}>
+      <input name="username" />
+      <SubmitButton />  {/* Must be inside form */}
+    </form>
+  );
+}
+
+KEY RULES
+---------
+1. Must Be Called Inside Form
+   ✅ Component inside <form>
+   ❌ Component outside <form>
+   ❌ In the same component that renders <form>
+
+2. Only Reads Parent Form
+   - Doesn't read sibling forms
+   - Doesn't read child forms
+   - Only reads immediate parent form
+
+3. React 19+ Only
+   - Not available in earlier versions
+   - Use context pattern for older React
+
+CORRECT USAGE
+--------------
+✅ Correct:
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>Submit</button>;
+}
+
+function Form() {
+  return (
+    <form>
+      <SubmitButton />  {/* Inside form */}
+    </form>
+  );
+}
+
+❌ Incorrect:
+function Form() {
+  const { pending } = useFormStatus();  // ❌ Can't call here
+  
+  return (
+    <form>
+      <button disabled={pending}>Submit</button>
+    </form>
+  );
+}
+
+ACCESSING FORM DATA
+-------------------
+Read submitted data while form is pending:
+
+function SubmitStatus() {
+  const { pending, data } = useFormStatus();
+  
+  if (!pending) return null;
+  
+  const username = data?.get('username');
+  return <p>Submitting for {username}...</p>;
+}
+
+<form action={handleSubmit}>
+  <input name="username" />
+  <SubmitStatus />
+</form>
+
+COMMON PATTERNS
+---------------
+Pattern 1: Reusable Submit Button
+----------------------------------
+function SubmitButton({ children, ...props }) {
+  const { pending } = useFormStatus();
+  
+  return (
+    <button 
+      type="submit" 
+      disabled={pending}
+      {...props}
+    >
+      {pending ? 'Loading...' : children}
+    </button>
+  );
+}
+
+// Use anywhere in forms
+<form action={handleSubmit}>
+  <input name="email" />
+  <SubmitButton>Sign Up</SubmitButton>
+</form>
+
+<form action={handleLogin}>
+  <input name="username" />
+  <SubmitButton>Login</SubmitButton>
+</form>
+
+Pattern 2: Loading Indicator
+-----------------------------
+function LoadingSpinner() {
+  const { pending } = useFormStatus();
+  
+  if (!pending) return null;
+  
+  return (
+    <div className="spinner">
+      <Spinner /> Processing...
+    </div>
+  );
+}
+
+<form>
+  <LoadingSpinner />
+  <input name="email" />
+  <button>Submit</button>
+</form>
+
+Pattern 3: Disable All Inputs
+------------------------------
+function FormInput({ name, ...props }) {
+  const { pending } = useFormStatus();
+  
+  return (
+    <input 
+      name={name}
+      disabled={pending}
+      {...props}
+    />
+  );
+}
+
+<form>
+  <FormInput name="username" />
+  <FormInput name="email" />
+  <button>Submit</button>
+</form>
+
+Pattern 4: Conditional Fields
+------------------------------
+function ConditionalField() {
+  const { data } = useFormStatus();
+  const showField = data?.get('needsAddress') === 'yes';
+  
+  if (!showField) return null;
+  
+  return <input name="address" />;
+}
+
+<form>
+  <select name="needsAddress">
+    <option value="no">No</option>
+    <option value="yes">Yes</option>
+  </select>
+  <ConditionalField />
+  <button>Submit</button>
+</form>
+
+Pattern 5: Submit Confirmation
+-------------------------------
+function SubmitConfirmation() {
+  const { pending, data } = useFormStatus();
+  
+  if (!pending) return null;
+  
+  const email = data?.get('email');
+  return (
+    <div className="confirmation">
+      Sending verification email to {email}...
+    </div>
+  );
+}
+
+Pattern 6: Progress Indicator
+------------------------------
+function FormProgress() {
+  const { pending, data } = useFormStatus();
+  
+  if (!pending) return null;
+  
+  const fieldsCount = data ? Array.from(data.keys()).length : 0;
+  
+  return (
+    <div>
+      Submitting {fieldsCount} fields...
+    </div>
+  );
+}
+
+READING FORM METHOD AND ACTION
+-------------------------------
+function FormDebugInfo() {
+  const { method, action, pending } = useFormStatus();
+  
+  return (
+    <div>
+      <p>Method: {method}</p>
+      <p>Action: {typeof action === 'function' ? 'Function' : action}</p>
+      <p>Pending: {pending ? 'Yes' : 'No'}</p>
+    </div>
+  );
+}
+
+<form action="/api/submit" method="post">
+  <FormDebugInfo />
+  <input name="data" />
+  <button>Submit</button>
+</form>
+
+WITH SERVER ACTIONS (NEXT.JS)
+------------------------------
+'use server'
+export async function submitForm(formData) {
+  await saveToDatabase(formData);
+}
+
+// Client Component
+'use client'
+import { useFormStatus } from 'react';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>Submit</button>;
+}
+
+export default function Form() {
+  return (
+    <form action={submitForm}>
+      <input name="name" />
+      <SubmitButton />
+    </form>
+  );
+}
+
+NESTED FORMS
+------------
+Each form tracks its own status independently:
+
+function InnerButton() {
+  const { pending } = useFormStatus();
+  // Reads inner form's status
+  return <button disabled={pending}>Submit Inner</button>;
+}
+
+function OuterButton() {
+  const { pending } = useFormStatus();
+  // Reads outer form's status
+  return <button disabled={pending}>Submit Outer</button>;
+}
+
+function NestedForms() {
+  return (
+    <form action={handleOuter}>
+      <input name="outer" />
+      <OuterButton />
+      
+      <form action={handleInner}>
+        <input name="inner" />
+        <InnerButton />
+      </form>
+    </form>
+  );
+}
+
+STYLING BASED ON STATUS
+------------------------
+function StyledInput({ name, ...props }) {
+  const { pending } = useFormStatus();
+  
+  return (
+    <input
+      name={name}
+      style={{
+        opacity: pending ? 0.5 : 1,
+        cursor: pending ? 'not-allowed' : 'text'
+      }}
+      disabled={pending}
+      {...props}
+    />
+  );
+}
+
+COMBINING WITH USE ACTION STATE
+--------------------------------
+import { useFormStatus, useActionState } from 'react';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  
+  return (
+    <button disabled={pending}>
+      {pending ? 'Submitting...' : 'Submit'}
+    </button>
+  );
+}
+
+function Form() {
+  const [state, formAction] = useActionState(submitAction, {});
+  
+  return (
+    <form action={formAction}>
+      <input name="email" />
+      <SubmitButton />
+      {state.error && <p>{state.error}</p>}
+    </form>
+  );
+}
+
+BEST PRACTICES
+--------------
+1. Create Reusable Components
+   Make generic submit buttons, loaders, etc.
+
+2. Always Check Pending State
+   const { pending } = useFormStatus();
+   if (pending) return <Loader />;
+
+3. Disable Inputs During Submit
+   <input disabled={pending} />
+
+4. Show Visual Feedback
+   Display loading states, spinners, progress
+
+5. Use for Form-Specific UI
+   Don't use for general loading states
+
+6. Keep Components Simple
+   One responsibility per component
+
+7. Handle Null Data
+   const value = data?.get('field') ?? 'default';
+
+8. Type Check Action
+   if (typeof action === 'function') { ... }
+
+COMMON USE CASES
+----------------
+1. Submit Buttons
+   Disable and show loading text
+
+2. Loading Indicators
+   Show spinners during submission
+
+3. Form Validation Messages
+   Display while validating
+
+4. Progress Bars
+   Show upload/submit progress
+
+5. Disable Form Fields
+   Prevent changes during submit
+
+6. Conditional Rendering
+   Show/hide based on form data
+
+7. Status Messages
+   "Submitting...", "Validating...", etc.
+
+LIMITATIONS
+-----------
+1. React 19+ Only
+   Not available in older versions
+
+2. Must Be Inside Form
+   Can't be used outside form context
+
+3. Parent Form Only
+   Doesn't read sibling or child forms
+
+4. No Manual Control
+   Can't manually set pending state
+
+5. Read-Only
+   Can't modify form status
+
+MIGRATION FROM CONTEXT PATTERN
+-------------------------------
+Before (Context Pattern):
+-------------------------
+const FormContext = createContext();
+
+function Form() {
+  const [pending, setPending] = useState(false);
+  
+  const handleSubmit = async (e) => {
+    setPending(true);
+    await submit(e);
+    setPending(false);
+  };
+  
+  return (
+    <FormContext.Provider value={{ pending }}>
+      <form onSubmit={handleSubmit}>
+        <SubmitButton />
+      </form>
+    </FormContext.Provider>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useContext(FormContext);
+  return <button disabled={pending}>Submit</button>;
+}
+
+After (useFormStatus):
+----------------------
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>Submit</button>;
+}
+
+function Form() {
+  return (
+    <form action={handleSubmit}>
+      <SubmitButton />
+    </form>
+  );
+}
+
+Much simpler!
+
+ERROR HANDLING
+--------------
+useFormStatus doesn't provide error state. Combine with useActionState:
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>Submit</button>;
+}
+
+function Form() {
+  const [state, formAction] = useActionState(submitAction, {});
+  
+  return (
+    <form action={formAction}>
+      <input name="email" />
+      <SubmitButton />
+      {state.error && <ErrorMessage error={state.error} />}
+    </form>
+  );
+}
+
+TESTING
+-------
+Testing components that use useFormStatus:
+
+import { renderWithForm } from './test-utils';
+
+test('disables button when pending', () => {
+  const { getByRole } = renderWithForm(
+    <SubmitButton />,
+    { pending: true }
+  );
+  
+  expect(getByRole('button')).toBeDisabled();
+});
+
+SUMMARY
+-------
+✅ Provides form status to child components
+✅ Must be called inside <form> element
+✅ Returns pending, data, method, action
+✅ Great for reusable form components
+✅ Simplifies submit button creation
+✅ Works with Server Actions
+✅ React 19+ only
+✅ Read-only (can't modify status)
+✅ Tracks parent form only
+✅ Combine with useActionState for complete solution
+
+useFormStatus makes it easy to create reusable form components that respond
+to the form's submission state without prop drilling or context setup.

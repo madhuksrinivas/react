@@ -13,6 +13,7 @@ import ErrorBoundary_React from "./error-boundary/ErrorBoundary_React";
 import LazyLoading_React from "./lazyloading-suspense/LazyLoading_React";
 import Routing_React from "./routing/Routing_React";
 import Forms_React from "./forms/Forms_React";
+import FormHooks_React from "./hooks/form-hooks/FormHooks_React";
 
 function App() {
   return (
@@ -58,7 +59,10 @@ function App() {
       {/* <Routing_React /> */}
 
       {/* Forms */}
-      <Forms_React />
+      {/* <Forms_React /> */}
+
+      {/* Form Hooks */}
+      {/* <FormHooks_React /> */}
     </>
   );
 }
