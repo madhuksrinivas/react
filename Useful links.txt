@@ -1,0 +1,12 @@
+https://web.dev/articles/rendering-on-the-web
+https://www.patterns.dev/react/react-selective-hydration/
+https://www.patterns.dev/react/progressive-hydration/
+https://www.patterns.dev/react/streaming-ssr/
+https://www.developerway.com/posts/reconciliation-in-react
+https://www.greatfrontend.com/questions/quiz/what-is-reconciliation-in-react
+https://www.geeksforgeeks.org/reactjs/explain-the-concept-of-time-slicing-in-concurrent-mode/
+https://www.patterns.dev/vanilla/islands-architecture/
+https://www.patterns.dev/vanilla/virtual-lists/
+https://www.patterns.dev/react/incremental-static-rendering/
+https://medium.com/@ignatovich.dm/react-19s-engine-a-quick-dive-into-concurrent-rendering-6436d39efe2b
+https://dev.to/louay24/understanding-the-react-concurrent-mode-a-deep-dive-15le
