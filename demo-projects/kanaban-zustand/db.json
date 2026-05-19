@@ -1,0 +1,29 @@
+{
+  "tasks": [
+    {
+      "title": "Task 1",
+      "status": "PLANNED",
+      "description": "This is the description for Task 1",
+      "id": "CB_Akw78GS4"
+    },
+    {
+      "title": "Task 2",
+      "status": "ONGOING",
+      "description": "This is the description for Task 2",
+      "id": "6AXCGXRNops"
+    },
+    {
+      "title": "Task 3",
+      "status": "DONE",
+      "description": "This is the description for Task 3",
+      "id": "oUgnA2DGsts"
+    },
+    {
+      "title": "Task 4",
+      "description": "Task 4 description",
+      "status": "DONE",
+      "id": "ptBDnzBWDMc"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

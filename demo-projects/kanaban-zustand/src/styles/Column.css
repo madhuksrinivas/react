@@ -1,0 +1,30 @@
+.column {
+  background: var(--COLOR-GREY-DARK);
+  min-height: 20rem;
+  color: #fff;
+  width: 33%;
+  max-width: 20rem;
+  margin: 0 0.5rem;
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.title-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title-wrapper button {
+  all: unset;
+  color: black;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  height: fit-content;
+}
+
+.title-wrapper button:hover {
+  background: var(--COLOR-GREY-LIGHT);
+  cursor: pointer;
+}

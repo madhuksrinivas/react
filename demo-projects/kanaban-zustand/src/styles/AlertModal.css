@@ -1,0 +1,31 @@
+.alert-modal {
+  position: fixed;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background-color: #555;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 25%;
+}
+
+.alert-modal.SUCCESS {
+  background-color: #4caf50;
+}
+
+.alert-modal.ERROR {
+  background-color: #f44336;
+}
+
+.alert-modal.WARN {
+  background-color: #ff9800;
+}
+
+.alert-modal.success {
+  background-color: #4caf50;
+}

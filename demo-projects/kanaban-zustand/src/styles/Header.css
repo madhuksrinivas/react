@@ -1,0 +1,8 @@
+header {
+  background: var(--COLOR-GREY);
+  color: wheat;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}

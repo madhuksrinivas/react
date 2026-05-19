@@ -1,0 +1,49 @@
+.task {
+  background: white;
+  border-radius: 4px;
+  min-height: 5rem;
+  color: black;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 20px 0 20px 0;
+}
+
+.btm-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.task input {
+  width: 150%;
+  padding: 0.25rem;
+  font-size: medium;
+  margin: 0 0.25rem 0.25rem 0;
+}
+
+.task textarea {
+  width: 100%;
+  padding: 0.25rem;
+  font-size: medium;
+  resize: vertical;
+  margin: 0.25rem 0 0.25rem 0;
+}
+
+.status {
+  font-size: small;
+  background: var(--COLOR-GREY-LIGHT);
+  padding: 0.25rem;
+  border-radius: 4px;
+}
+
+.PLANNED {
+  background: var(--COLOR-GREY-LIGHT);
+}
+
+.ONGOING {
+  background: var(--COLOR-ONGOING);
+}
+.DONE {
+  background: var(--COLOR-DONE);
+}

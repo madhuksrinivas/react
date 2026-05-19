@@ -1,0 +1,7 @@
+.column-container {
+  background: var(--COLOR-GREY);
+  min-height: 100vh;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+}
