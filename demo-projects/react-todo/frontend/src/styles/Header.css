@@ -1,0 +1,40 @@
+.header {
+  margin-bottom: 1rem;
+  align-self: center;
+}
+
+.header-title {
+  color: purple;
+  text-align: center;
+}
+
+.header-subtitle {
+  color: #555;
+  font-size: 1.25rem;
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.header-button {
+  border: none;
+  background: none;
+}
+
+.header-button:hover {
+  cursor: pointer;
+}
+
+.header-button h2 {
+  color: navy;
+}
+
+.header-button h2.underline {
+  text-decoration: underline;
+}

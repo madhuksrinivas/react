@@ -1,0 +1,7 @@
+.completed-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  width: 45%;
+  margin: 1rem auto 0 auto;
+}

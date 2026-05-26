@@ -1,0 +1,12 @@
+.todo-input {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.todo-input input {
+  height: 2.5rem;
+  width: 50%;
+  margin-right: 1rem;
+  background-color: rgb(165, 229, 245);
+}
