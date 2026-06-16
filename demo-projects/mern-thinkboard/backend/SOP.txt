@@ -1,0 +1,26 @@
+Backend:
+npm init -y              -->    creates ../backend/package.json
+npm install express      -->    installs express module
+npm install nodemon -D   -->    this will auto re-start the backend server if any changes made from backend, instead of killing it and restarting
+npm install mongoose     -->    Mongoose is a Node.js library (an ODM, Object Data Modeling tool) for MongoDB.
+
+                                It helps you work with MongoDB using JavaScript objects by providing:
+
+                                Schemas: define the shape and validation rules of your data.
+                                Models: interact with collections using those schemas.
+                                Built-in validation: enforce required fields, types, custom checks.
+                                Middleware/hooks: run logic before or after actions like save/update.
+                                Query helpers and population: easier querying and referencing related data.
+                                In short, MongoDB driver gives low-level database access, while Mongoose adds structure and convenience on top.  
+      
+npm install dotenv       -->    this will make the env variables from .env file available to the backend server
+
+Middleware: A function that runs in the middle between the request and the respose
+            just before the server sends back the response to the client, middleware acts
+            eg: app.use(express.json()); -> get access to req.body in controllers | it will parse JSON body of incoming requests and make it available under req.body
+
+Rate Limiting: Rate Limiting is a way to control how often someone can do something on a website or an app
+               like how many times they can refresh a page, make request to an API, try to login
+               only 100 request/user for every 15 min
+
+npm i @upstash/ratelimit @upstash/redis    --> to implement ratelimiting

@@ -1,0 +1,53 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
+  
+  <!-- Board rectangle -->
+  <rect x="30" y="40" width="140" height="110" rx="4" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
+  
+  <!-- Board texture lines -->
+  <line x1="35" y1="55" x2="165" y2="55" stroke="#334155" stroke-width="1" opacity="0.5"/>
+  <line x1="35" y1="75" x2="165" y2="75" stroke="#334155" stroke-width="1" opacity="0.5"/>
+  <line x1="35" y1="95" x2="165" y2="95" stroke="#334155" stroke-width="1" opacity="0.5"/>
+  <line x1="35" y1="115" x2="165" y2="115" stroke="#334155" stroke-width="1" opacity="0.5"/>
+  
+  <!-- Note 1 (top-left, tilted) -->
+  <g transform="translate(50, 60) rotate(-8)">
+    <rect x="0" y="0" width="35" height="30" rx="2" fill="#fef08a" stroke="#94a3b8" stroke-width="1"/>
+    <line x1="5" y1="8" x2="30" y2="8" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+    <line x1="5" y1="13" x2="30" y2="13" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+    <line x1="5" y1="18" x2="25" y2="18" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- Note 2 (middle, tilted) -->
+  <g transform="translate(100, 65) rotate(5)">
+    <rect x="0" y="0" width="35" height="30" rx="2" fill="#dbeafe" stroke="#94a3b8" stroke-width="1"/>
+    <line x1="5" y1="8" x2="30" y2="8" stroke="#3b82f6" stroke-width="1" opacity="0.6"/>
+    <line x1="5" y1="13" x2="30" y2="13" stroke="#3b82f6" stroke-width="1" opacity="0.6"/>
+    <line x1="5" y1="18" x2="28" y2="18" stroke="#3b82f6" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- Note 3 (right, tilted) -->
+  <g transform="translate(130, 75) rotate(-5)">
+    <rect x="0" y="0" width="35" height="30" rx="2" fill="#fce7f3" stroke="#94a3b8" stroke-width="1"/>
+    <line x1="5" y1="8" x2="30" y2="8" stroke="#ec4899" stroke-width="1" opacity="0.6"/>
+    <line x1="5" y1="13" x2="30" y2="13" stroke="#ec4899" stroke-width="1" opacity="0.6"/>
+    <line x1="5" y1="18" x2="26" y2="18" stroke="#ec4899" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- Lightbulb (thinking symbol) -->
+  <g transform="translate(100, 125)">
+    <!-- Bulb -->
+    <circle cx="0" cy="-5" r="8" fill="#fef08a" stroke="#22c55e" stroke-width="1.5"/>
+    <!-- Filament -->
+    <path d="M -2 -5 Q -1 0 0 1 Q 1 0 2 -5" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- Base -->
+    <rect x="-3" y="3" width="6" height="3" rx="1" fill="#22c55e"/>
+    <!-- Threads -->
+    <line x1="-1.5" y1="6" x2="-1.5" y2="9" stroke="#22c55e" stroke-width="0.8"/>
+    <line x1="1.5" y1="6" x2="1.5" y2="9" stroke="#22c55e" stroke-width="0.8"/>
+  </g>
+  
+  <!-- Glow effect around lightbulb -->
+  <circle cx="100" cy="125" r="15" fill="none" stroke="#22c55e" stroke-width="0.5" opacity="0.3"/>
+</svg>

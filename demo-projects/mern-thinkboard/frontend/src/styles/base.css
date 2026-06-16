@@ -1,0 +1,28 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100svh;
+  width: 100%;
+  background-color: black;
+  color: white;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+#root {
+  min-height: 100svh;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
