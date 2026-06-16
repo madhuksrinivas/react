@@ -7,6 +7,7 @@ import cors from "cors";
 
 dotenv.config();
 
+const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 5000;
 const baseUrl = "/api/notes";
 
@@ -24,8 +25,9 @@ app.use(rateLimiter);
 app.use(baseUrl, notesRoutes);
 
 connectDB().then(() => {
+  const serverUrl = `https://${HOST}:${PORT}${baseUrl}`;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log(`Access the notes at http://localhost:${PORT}${baseUrl}`);
+    console.log(`Access the notes at ${serverUrl}`);
   });
 });
