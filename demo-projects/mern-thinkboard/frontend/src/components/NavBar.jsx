@@ -23,7 +23,7 @@ const NavBar = ({ activePage }) => {
             </Link>
           </div>
           <div className="navbar-create-wrap">
-            {activePage !== "create" ? (
+            {activePage !== "create" && activePage !== "editNote" ? (
               <Link
                 to="/create"
                 className={`navbar-create-link ${activePage === "create" ? "active" : ""}`}
@@ -34,7 +34,7 @@ const NavBar = ({ activePage }) => {
             ) : (
               <Link
                 to="/"
-                className={`navbar-create-link ${activePage === "home" ? "active" : ""}`}
+                className={`navbar-create-link ${activePage === "create" || activePage === "editNote" ? "active" : ""}`}
               >
                 <ArrowLeft className="navbar-create-icon" />
                 Back
