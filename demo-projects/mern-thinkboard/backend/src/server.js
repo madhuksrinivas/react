@@ -25,7 +25,8 @@ app.use(rateLimiter);
 app.use(baseUrl, notesRoutes);
 
 connectDB().then(() => {
-  const serverUrl = `https://${HOST}:${PORT}${baseUrl}`;
+  const serverUrl = `https://${HOST}${baseUrl}`; // PROD
+  // const serverUrl = `http://${HOST}:${PORT}${baseUrl}`; // Local
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Access the notes at ${serverUrl}`);
