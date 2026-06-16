@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { NOTES_API_URL } from "../config/api";
 
 const updateNote = async ({ id, title, content }) => {
-  const response = await axios.patch(`http://localhost:5000/api/notes/${id}`, {
+  const response = await axios.patch(`${NOTES_API_URL}/${id}`, {
     title,
     content,
   });

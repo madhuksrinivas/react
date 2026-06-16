@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { NOTES_API_URL } from "../config/api";
 
 const fetchNoteById = async (id) => {
-  const response = await axios.get(`http://localhost:5000/api/notes/${id}`);
+  const response = await axios.get(`${NOTES_API_URL}/${id}`);
   return response.data;
 };
 
