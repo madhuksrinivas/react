@@ -4,7 +4,7 @@ import { NOTES_API_URL } from "../config/api";
 
 const fetchNotes = async () => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // await new Promise((resolve) => setTimeout(resolve, 2000)); // for local simulation
     const response = await axios.get(NOTES_API_URL);
     return response.data;
   } catch (error) {
