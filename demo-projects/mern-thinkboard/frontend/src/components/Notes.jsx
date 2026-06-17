@@ -35,8 +35,7 @@ function Notes({ notesData }) {
   return notesData.length === 0 ? (
     <div className="no-notes-message">
       <h2>
-        No notes found. Click <Link to="/create">here</Link> to create your
-        first note!
+        No notes found. Click <Link to="/create">here</Link> to create one!
       </h2>
     </div>
   ) : (
