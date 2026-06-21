@@ -14,9 +14,7 @@ function FormHooks_React() {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ borderBottom: "2px solid #333", paddingBottom: "10px" }}>
-        Form Hooks in React
-      </h1>
+      <h1>Form Hooks in React</h1>
 
       <div style={{ marginTop: "20px", marginBottom: "20px" }}>
         {tabs.map((tab) => (

@@ -12,9 +12,7 @@ function LazyLoading_React() {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ borderBottom: "3px solid #333", paddingBottom: "10px" }}>
-        Lazy Loading & Suspense in React
-      </h1>
+      <h1>Lazy Loading & Suspense in React</h1>
 
       {/* Example 1: Basic Lazy Loading */}
       <div style={{ marginTop: "30px" }}>

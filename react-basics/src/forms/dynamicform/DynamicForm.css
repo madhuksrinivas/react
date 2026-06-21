@@ -1,0 +1,48 @@
+.dynamic-form-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid black;
+}
+
+.form-field {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  grid-template-areas:
+    "label input"
+    ". error";
+  gap: 5px;
+}
+
+.form-field label {
+  grid-area: label;
+  font-weight: bold;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  grid-area: input;
+}
+
+.form-field span {
+  grid-area: error;
+  color: red;
+  font-size: 12px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+button {
+  padding: 10px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

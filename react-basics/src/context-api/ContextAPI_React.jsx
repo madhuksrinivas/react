@@ -13,12 +13,13 @@ function ContextAPI_React() {
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: "20px",
+            width: "100%",
           }}
         >
-          <div>
+          <div style={{ minWidth: 0 }}>
             <ProductList />
           </div>
-          <div>
+          <div style={{ minWidth: 0 }}>
             <h2>Shopping Cart</h2>
             <CartItems />
             <CartSummary />
