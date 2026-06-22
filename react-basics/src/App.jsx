@@ -1,22 +1,24 @@
-import React from "react";
+import React, { Suspense } from "react";
 import "./App.css";
-import JSX_React from "./jsx/JSX_React";
-import Props_React from "./props/Props_React";
-import RenderProps from "./renderprops/RenderProps";
-import ListRendering_React from "./list-rendering/ListRendering";
-import HOC_React from "./hoc/HOC_React";
-import ContextAPI_React from "./context-api/ContextAPI_React";
-import ConditionalRendering_React from "./conditional-rendering/ConditionalRendering_React";
-import Components_React from "./components/Components_React";
-import ComponentArchitecture_React from "./component-architecture/ComponentArchitecture_React";
-import EventHandling_React from "./event-handling/EventHandling_React";
-import ErrorBoundary_React from "./error-boundary/ErrorBoundary_React";
-import LazyLoading_React from "./lazyloading-suspense/LazyLoading_React";
-import Routing_React from "./routing/Routing_React";
-import Forms_React from "./forms/Forms_React";
-import FormHooks_React from "./hooks/form-hooks/FormHooks_React";
-import MultiStepForm from "./forms/multi-step-form/MultiStepForm";
-import DynamicForm from "./forms/dynamicform/DynamicForm";
+import {
+  JSX_React,
+  Props_React,
+  RenderProps,
+  ListRendering_React,
+  HOC_React,
+  ContextAPI_React,
+  ConditionalRendering_React,
+  Components_React,
+  ComponentArchitecture_React,
+  EventHandling_React,
+  ErrorBoundary_React,
+  LazyLoading_React,
+  Routing_React,
+  Forms_React,
+  FormHooks_React,
+  MultiStepForm,
+  DynamicForm,
+} from "./pages";
 
 const PAGE_LABELS = [
   "JSX & React Basics",
@@ -119,27 +121,9 @@ function App() {
         </div>
       </header>
 
-      {renderPage()}
-
-      {/* <footer className="app-footer">
-        <button
-          className="nav-btn nav-btn-light"
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-        >
-          ← Prev
-        </button>
-        <span className="footer-page-counter">
-          {currentPage} / 17 — {PAGE_LABELS[currentPage - 1]}
-        </span>
-        <button
-          className="nav-btn nav-btn-light"
-          onClick={handleNextPage}
-          disabled={currentPage === 17}
-        >
-          Next →
-        </button>
-      </footer> */}
+      <Suspense fallback={<div className="page-loader">Loading...</div>}>
+        {renderPage()}
+      </Suspense>
     </>
   );
 }
